@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "B-Maps",
+    "slug": "bmaps",
+    "scheme": "bmaps",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0E0E0F",
+    "ios": {
+      "supportsTablet": false
+    },
+    "plugins": ["expo-router", "expo-font"]
+  }
+}

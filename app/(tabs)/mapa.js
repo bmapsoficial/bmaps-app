@@ -30,7 +30,9 @@ export default function Mapa() {
 
   return (
     <Tela>
-      <TituloGrafite tamanho={44}>Mapa</TituloGrafite>
+      <TituloGrafite tamanho={44} escorridos={false}>
+        Mapa
+      </TituloGrafite>
 
       <View style={[estilos.busca, sombraAdesivo(cores.laranja)]}>
         <Ionicons name="search" size={20} color={cores.laranja} />

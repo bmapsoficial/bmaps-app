@@ -99,22 +99,24 @@ export function TituloChamada({
   const tamanhoChamada = Math.round(tamanho * proporcao);
   return (
     <View style={[estilos.tituloChamada, estilo]}>
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={0.7}
-        style={[
-          estilos.tituloGrafite,
-          estilos.semGiro,
-          {
-            fontSize: tamanhoChamada,
-            lineHeight: tamanhoChamada * 1.3,
-            textShadowOffset: { width: 2, height: 2 },
-          },
-        ]}
-      >
-        {chamada}
-      </Text>
+      {chamada ? (
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+          style={[
+            estilos.tituloGrafite,
+            estilos.semGiro,
+            {
+              fontSize: tamanhoChamada,
+              lineHeight: tamanhoChamada * 1.3,
+              textShadowOffset: { width: 2, height: 2 },
+            },
+          ]}
+        >
+          {chamada}
+        </Text>
+      ) : null}
       <View style={{ paddingLeft: recuo }}>
         <Text
           numberOfLines={1}
@@ -123,7 +125,11 @@ export function TituloChamada({
           style={[
             estilos.tituloGrafite,
             estilos.semGiro,
-            { fontSize: tamanho, lineHeight: tamanho * 1.3, marginTop: -tamanho * 0.12 },
+            {
+              fontSize: tamanho,
+              lineHeight: tamanho * 1.3,
+              marginTop: chamada ? -tamanho * 0.12 : 0,
+            },
           ]}
         >
           {principal}

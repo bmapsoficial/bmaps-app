@@ -67,7 +67,9 @@ export default function BarraNavegacao({ state, emitter, navigateToTab }) {
             style={estilos.item}
           >
             <Ionicons name={ativo ? item.iconeAtivo : item.icone} size={23} color={cor} />
-            <Text style={[estilos.rotulo, { color: cor }]}>{item.rotulo}</Text>
+            <Text style={[estilos.rotulo, { color: cor }]} numberOfLines={1}>
+              {item.rotulo.toUpperCase()}
+            </Text>
           </Pressable>
         );
       })}
@@ -90,11 +92,15 @@ const estilos = StyleSheet.create({
     gap: 3,
     minHeight: 48,
   },
+  // O texto já vem em maiúsculas (em vez de textTransform): no iOS, a largura era
+  // medida com as letras minúsculas e o rótulo em maiúsculas ficava cortado nas pontas.
+  // O respiro lateral evita que a primeira letra da fonte Anton encoste na borda.
   rotulo: {
     fontFamily: fontes.bloco,
     fontSize: 12,
     letterSpacing: 1,
-    textTransform: 'uppercase',
+    paddingHorizontal: 2,
+    textAlign: 'center',
   },
   botaoMais: {
     width: 56,

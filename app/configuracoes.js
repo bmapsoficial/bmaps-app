@@ -11,9 +11,9 @@ import { cores, fontes, sombraAdesivo } from '../src/theme';
 // quando a sua função for implementada.
 const SECOES = [
   {
-    titulo: 'Notificações',
-    icone: 'notifications-outline',
-    descricao: 'Regiões, tipos de aviso e resumo diário.',
+    titulo: 'Conta',
+    icone: 'person-circle-outline',
+    descricao: 'E-mail, senha, sair e excluir conta.',
   },
   {
     titulo: 'Privacidade',
@@ -21,14 +21,14 @@ const SECOES = [
     descricao: '“Vou colar” sem mostrar o nome e os seus dados (LGPD).',
   },
   {
-    titulo: 'Conta',
-    icone: 'person-circle-outline',
-    descricao: 'E-mail, senha, sair e excluir conta.',
-  },
-  {
     titulo: 'Localização',
     icone: 'location-outline',
     descricao: 'Permissão de localização e cidade padrão.',
+  },
+  {
+    titulo: 'Notificações',
+    icone: 'notifications-outline',
+    descricao: 'Regiões, tipos de aviso e resumo diário.',
   },
   {
     titulo: 'Aparência',

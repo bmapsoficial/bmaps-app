@@ -31,7 +31,7 @@ export default function Mapa() {
   return (
     <Tela>
       <TituloGrafite tamanho={44} escorridos={false}>
-        Mapa
+        Onde a cena acontece
       </TituloGrafite>
 
       <View style={[estilos.busca, sombraAdesivo(cores.laranja)]}>

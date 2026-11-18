@@ -293,6 +293,8 @@ export function BotaoAdesivo({
 // Selecionada: bloco de spray rasgado na cor da categoria, com sombra grafite preta.
 // Não selecionada: fundo preto, contorno branco e sombra preta.
 // `alta`: versão maior, usada nas abas Perto de mim / Cena Brasil.
+// `compacta`: menos respiro lateral, para várias etiquetas dividirem uma linha (Mapa);
+// o texto diminui um pouco se precisar, em vez de quebrar.
 export function Etiqueta({
   titulo,
   ativa,
@@ -301,6 +303,7 @@ export function Etiqueta({
   corAtiva = cores.laranja,
   corTextoAtiva = cores.fundo,
   alta = false,
+  compacta = false,
 }) {
   return (
     <Pressable
@@ -310,12 +313,16 @@ export function Etiqueta({
       style={[
         estilos.etiqueta,
         alta && estilos.etiquetaAlta,
+        compacta && estilos.etiquetaCompacta,
         ativa ? estilos.etiquetaAtiva : [estilos.etiquetaInativa, sombraAdesivo('#000000', 3)],
         { transform: [{ rotate: `${inclinacao}deg` }] },
       ]}
     >
       {ativa ? <BlocoSpray cor={corAtiva} /> : null}
       <Text
+        numberOfLines={compacta ? 1 : undefined}
+        adjustsFontSizeToFit={compacta}
+        minimumFontScale={compacta ? 0.8 : undefined}
         style={[
           estilos.etiquetaTexto,
           alta && { fontSize: 17 },
@@ -458,6 +465,9 @@ const estilos = StyleSheet.create({
   },
   etiquetaAlta: {
     minHeight: 50,
+  },
+  etiquetaCompacta: {
+    paddingHorizontal: 6,
   },
   etiquetaAtiva: {
     backgroundColor: 'transparent',

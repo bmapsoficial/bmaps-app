@@ -1,20 +1,22 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 
 import { CartaoPapel, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
+import { alternarFiltro } from '../../src/filtroMapa';
 
 // Cada filtro, quando selecionado, usa a cor da própria categoria.
+// Não há filtro "Todos": nenhum filtro ativo já mostra todas as categorias.
 const FILTROS = [
-  { nome: 'Todos', cor: coresCategoria.todas },
-  { nome: 'Eventos', cor: coresCategoria.evento },
-  { nome: 'Treinos', cor: coresCategoria.treino },
-  { nome: 'Picos', cor: coresCategoria.pico },
-  { nome: 'Aulas', cor: coresCategoria.aula },
+  { chave: 'evento', nome: 'Eventos', cor: coresCategoria.evento },
+  { chave: 'treino', nome: 'Treinos', cor: coresCategoria.treino },
+  { chave: 'pico', nome: 'Picos', cor: coresCategoria.pico },
+  { chave: 'aula', nome: 'Aulas', cor: coresCategoria.aula },
 ];
-const INCLINACOES = [-2, 1, -1, 1.5, -1];
+const INCLINACOES = [1, -1, 1.5, -1];
 
 // Legenda: os mesmos arquivos SVG dos marcadores do mapa.
 const LEGENDA = [
@@ -26,7 +28,13 @@ const LEGENDA = [
 
 export default function Mapa() {
   const [busca, setBusca] = useState('');
-  const [filtro, setFiltro] = useState('Todos');
+  // null = nenhum filtro (mostra tudo). Ao entrar na aba, volta a mostrar tudo.
+  const [filtro, setFiltro] = useState(null);
+  useFocusEffect(
+    useCallback(() => {
+      setFiltro(null);
+    }, []),
+  );
 
   return (
     <Tela fundo={1}>
@@ -48,16 +56,19 @@ export default function Mapa() {
         />
       </View>
 
+      {/* Os quatro filtros dividem a mesma linha. Tocar de novo no ativo remove o filtro. */}
       <View style={estilos.filtros}>
-        {FILTROS.map(({ nome, cor }, i) => (
-          <Etiqueta
-            key={nome}
-            titulo={nome}
-            ativa={filtro === nome}
-            aoTocar={() => setFiltro(nome)}
-            inclinacao={INCLINACOES[i]}
-            corAtiva={cor}
-          />
+        {FILTROS.map(({ chave, nome, cor }, i) => (
+          <View key={chave} style={estilos.filtro}>
+            <Etiqueta
+              titulo={nome}
+              ativa={filtro === chave}
+              aoTocar={() => setFiltro((atual) => alternarFiltro(atual, chave))}
+              inclinacao={INCLINACOES[i]}
+              corAtiva={cor}
+              compacta
+            />
+          </View>
         ))}
       </View>
 
@@ -117,8 +128,11 @@ const estilos = StyleSheet.create({
   },
   filtros: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
+    gap: 8,
+  },
+  filtro: {
+    flex: 1,
+    minWidth: 0,
   },
   // Espaço reservado do mapa, dentro de um cartão de papel (proposta visual aprovada).
   areaMapa: {

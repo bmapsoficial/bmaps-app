@@ -14,7 +14,12 @@ const ITENS = {
 
 // Menu inferior no estilo rua: borda laranja, rótulos em letra de bloco
 // e o botão central de publicar como um adesivo inclinado.
-export default function BarraNavegacao({ state, navigation }) {
+//
+// A partir do Expo Router 58 (SDK 58), a barra personalizada recebe
+// { state, descriptors, emitter, navigateToTab, insets } e não recebe mais
+// o objeto `navigation`. O toque segue o mesmo fluxo da barra padrão:
+// emite o evento tabPress pelo `emitter` e troca de aba com `navigateToTab`.
+export default function BarraNavegacao({ state, emitter, navigateToTab }) {
   const margens = useSafeAreaInsets();
 
   return (
@@ -25,13 +30,13 @@ export default function BarraNavegacao({ state, navigation }) {
         const ativo = state.index === indice;
 
         const aoTocar = () => {
-          const evento = navigation.emit({
+          const evento = emitter.emit({
             type: 'tabPress',
             target: rota.key,
             canPreventDefault: true,
           });
-          if (!ativo && !evento.defaultPrevented) {
-            navigation.navigate(rota.name);
+          if (!ativo && !evento?.defaultPrevented) {
+            navigateToTab(rota.key);
           }
         };
 

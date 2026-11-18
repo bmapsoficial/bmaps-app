@@ -21,6 +21,8 @@ export const cores = {
 
 export const fontes = {
   grafite: 'SedgwickAveDisplay_400Regular',
+  // Títulos das telas: grafite com escorrido de tinta já desenhado nas letras.
+  titulo: 'BarcelonaGraffiti',
   marcador: 'PermanentMarker_400Regular',
   bloco: 'Anton_400Regular',
   texto: 'Inter_400Regular',

@@ -44,7 +44,9 @@ export function Tela({ children, rolagem = true }) {
 }
 
 // Título em letra de grafite, laranja, inclinado, com escorridos de tinta.
-export function TituloGrafite({ children, tamanho = 46, escorridos = true }) {
+// A fonte dos títulos já tem escorridos desenhados nas letras, por isso os
+// escorridos extras (traços laranja) ficam desligados por padrão.
+export function TituloGrafite({ children, tamanho = 46, escorridos = false }) {
   return (
     <View style={{ marginBottom: escorridos ? 18 : 6 }}>
       {/* A altura de linha precisa ser maior que o tamanho da fonte: a letra de grafite
@@ -174,7 +176,7 @@ const estilos = StyleSheet.create({
     gap: 18,
   },
   tituloGrafite: {
-    fontFamily: fontes.grafite,
+    fontFamily: fontes.titulo,
     color: cores.laranja,
     transform: [{ rotate: '-3deg' }],
     textShadowColor: '#000000',

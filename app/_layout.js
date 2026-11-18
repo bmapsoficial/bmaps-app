@@ -24,6 +24,9 @@ export default function LayoutRaiz() {
     Anton_400Regular,
     PermanentMarker_400Regular,
     SedgwickAveDisplay_400Regular,
+    // Fonte dos títulos: cópia da Barcelona Graffiti Bombing com os acentos do
+    // português acrescentados (o arquivo original vinha sem eles).
+    BarcelonaGraffiti: require('../assets/fonts/BarcelonaGraffiti-BMaps.ttf'),
   });
 
   // Enquanto as fontes carregam, mostra só o fundo escuro (evita piscar com a fonte errada).

@@ -30,9 +30,9 @@ export default function Mapa() {
 
   return (
     <Tela>
-      {/* Até duas linhas; em telas estreitas o título diminui em vez de cortar. */}
-      <TituloGrafite tamanho={44} escorridos={false} linhas={2} ajustar>
-        Onde a cena acontece
+      {/* Sempre em uma linha: começa em 44 e só diminui se a largura da tela não comportar. */}
+      <TituloGrafite tamanho={44} escorridos={false} linhas={1} ajustar>
+        Onde acontece a cena
       </TituloGrafite>
 
       <View style={[estilos.busca, sombraAdesivo(cores.laranja)]}>

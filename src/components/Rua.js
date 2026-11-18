@@ -56,6 +56,7 @@ export function TituloGrafite({
   linhas,
   ajustar = false,
   escalaMinima = 0.6,
+  centralizar = false,
   estilo,
 }) {
   return (
@@ -67,7 +68,11 @@ export function TituloGrafite({
         numberOfLines={linhas}
         adjustsFontSizeToFit={ajustar}
         minimumFontScale={ajustar ? escalaMinima : undefined}
-        style={[estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.3 }]}
+        style={[
+          estilos.tituloGrafite,
+          { fontSize: tamanho, lineHeight: tamanho * 1.3 },
+          centralizar && { textAlign: 'center' },
+        ]}
       >
         {children}
       </Text>

@@ -40,7 +40,9 @@ export default function Inicio() {
       </View>
 
       <View>
-        <TituloGrafite escorridos={false}>O que tá rolando</TituloGrafite>
+        <TituloGrafite escorridos={false} centralizar>
+          O que tá rolando
+        </TituloGrafite>
         <Text style={estilos.regiao}>Sua região: ainda não definida</Text>
       </View>
 

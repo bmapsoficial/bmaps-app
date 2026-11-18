@@ -41,7 +41,11 @@ export default function Perfil() {
 
   return (
     <Tela>
+      {/* Mesmo cabeçalho da tela Avisar a cena: título à esquerda e botão à direita. */}
       <View style={estilos.topo}>
+        <TituloGrafite tamanho={42} linhas={1} ajustar estilo={estilos.titulo}>
+          Meu corre
+        </TituloGrafite>
         <Pressable
           onPress={() => router.push('/configuracoes')}
           accessibilityRole="button"
@@ -203,7 +207,14 @@ const estilos = StyleSheet.create({
   },
   topo: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  titulo: {
+    flex: 1,
+    minWidth: 0,
+    marginBottom: 0,
   },
   // Mesmo desenho do sininho da tela Início.
   botaoConfiguracoes: {

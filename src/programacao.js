@@ -7,11 +7,13 @@
 //
 // Formato salvo (versao 2):
 //   Evento:  programacao = { tipo: 'dias', dias: [{ data, inicio, fim }] }
-//   Treino:  programacao = { tipo: 'semanal', diasSemana, inicio, fim, dataInicio, dataFim }
+//   Treino:  programacao = { tipo: 'dias', dias: [{ data, inicio, fim }] }  (sessões em datas específicas)
 //   Aula avulsa:  { tipo: 'dias', dias: [{ data, inicio, fim }] }
 //   Aula regular: { tipo: 'semanal', ... }  (dataFim opcional)
 //   Curso/turma:  { tipo: 'periodo', diasSemana, inicio, fim, dataInicio, dataFim }
-//   Pico: sem programação.
+//   Pico (opcional): programacao = { tipo: 'encontros', encontros: [{ dia, inicio, fim }] }
+//     Dias e horários habituais em que a galera costuma colar — não é horário de funcionamento.
+//     Sem dias marcados, o pico é salvo sem `programacao`.
 // Datas são guardadas como 'AAAA-MM-DD' e horários como 'HH:MM'.
 // Publicações antigas (sem `programacao`) continuam exibindo o texto livre `quando`.
 
@@ -148,6 +150,12 @@ export function descreverProgramacao(publicacao) {
       periodo,
     ];
   }
+  if (p.tipo === 'encontros') {
+    return p.encontros.map((e) => {
+      const dia = DIAS_SEMANA.find((d) => d.chave === e.dia);
+      return `${dia ? dia.nome : e.dia} · ${formatarIntervalo(e.inicio, e.fim)}`;
+    });
+  }
   if (p.tipo === 'periodo') {
     return [
       `De ${formatarData(p.dataInicio)} a ${formatarData(p.dataFim)}`,
@@ -213,4 +221,20 @@ export function montarSemanal(semanal, { tipo = 'semanal', exigirFim = false } =
   }
   if (erros.length) return { erros };
   return { erros, programacao: { tipo, diasSemana, inicio, fim, dataInicio, dataFim } };
+}
+
+// Pico: dias da semana habituais de encontro, cada um com seu horário. Opcional:
+// sem nenhum dia marcado, devolve programacao = null (pico publicado sem horários).
+// `encontros` é um objeto { seg: { inicio, fim }, ter: {...} } só com os dias marcados.
+export function montarEncontros(encontros) {
+  const erros = [];
+  const lista = [];
+  DIAS_SEMANA.forEach((d) => {
+    const e = encontros[d.chave];
+    if (!e) return;
+    const { inicio, fim } = validarHorario(e.inicio, e.fim, d.nome, erros);
+    if (inicio && fim) lista.push({ dia: d.chave, inicio, fim });
+  });
+  if (erros.length) return { erros };
+  return { erros, programacao: lista.length ? { tipo: 'encontros', encontros: lista } : null };
 }

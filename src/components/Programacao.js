@@ -168,6 +168,39 @@ export function ProgramacaoSemanal({ valor, aoMudar, cor, fimObrigatorio = false
   );
 }
 
+// Pico: dias e horários habituais de encontro. Cada dia marcado tem seu próprio horário.
+// `valor` é { seg: { inicio, fim }, ... } só com os dias marcados.
+export function ProgramacaoEncontros({ valor, aoMudar, cor }) {
+  const alternarDia = (chave) => {
+    if (valor[chave]) {
+      const resto = { ...valor };
+      delete resto[chave];
+      aoMudar(resto);
+    } else {
+      aoMudar({ ...valor, [chave]: { inicio: '', fim: '' } });
+    }
+  };
+  const mudarHorario = (chave, campo, v) =>
+    aoMudar({ ...valor, [chave]: { ...valor[chave], [campo]: v } });
+
+  return (
+    <View style={{ gap: 12 }}>
+      <SeletorDiasSemana selecionados={Object.keys(valor)} aoAlternar={alternarDia} cor={cor} />
+      {DIAS_SEMANA.filter((d) => valor[d.chave]).map((d) => (
+        <View key={d.chave} style={{ gap: 8 }}>
+          <Rotulo cor={cores.texto}>{d.nome}</Rotulo>
+          <CamposHorario
+            inicio={valor[d.chave].inicio}
+            fim={valor[d.chave].fim}
+            aoMudarInicio={(v) => mudarHorario(d.chave, 'inicio', v)}
+            aoMudarFim={(v) => mudarHorario(d.chave, 'fim', v)}
+          />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const estilos = StyleSheet.create({
   // Mesmo estilo dos campos que já existiam na tela Avisar a cena.
   campo: {

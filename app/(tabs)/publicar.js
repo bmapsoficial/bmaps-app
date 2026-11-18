@@ -3,8 +3,14 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons';
 
 import { BotaoAdesivo, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
-import { ListaDeDias, OpcoesUnicas, ProgramacaoSemanal } from '../../src/components/Programacao';
-import { cores, coresCategoria, fontes } from '../../src/theme';
+import {
+  ListaDeDias,
+  OpcoesUnicas,
+  ProgramacaoEncontros,
+  ProgramacaoSemanal,
+} from '../../src/components/Programacao';
+import InfoPublicacao from '../../src/components/InfoPublicacao';
+import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
 import {
   CONDICOES_AULA,
   FORMATOS_AULA,
@@ -12,6 +18,7 @@ import {
   VERSAO_PUBLICACAO,
   descreverProgramacao,
   montarDias,
+  montarEncontros,
   montarSemanal,
 } from '../../src/programacao';
 
@@ -34,6 +41,7 @@ const TIPOS = {
     { chave: 'nome', rotulo: 'Nome do pico', dica: 'Como a galera chama o lugar' },
     { chave: 'local', rotulo: 'Local', dica: 'Endereço ou ponto de referência' },
     { chave: 'piso', rotulo: 'Tipo de piso', dica: 'Ex.: concreto liso, linóleo' },
+    { chave: 'programacao', especial: true },
   ],
   Aula: [
     { chave: 'local', rotulo: 'Local', dica: 'Endereço ou nome do lugar' },
@@ -53,6 +61,13 @@ const COR_TIPO = {
   Aula: coresCategoria.aula,
 };
 const INCLINACOES = [-3, 1, -1, 2];
+// Descrição curta exibida abaixo dos cards, conforme a categoria selecionada.
+const DESCRICOES = {
+  Evento: 'Para divulgar batalhas, campeonatos, competições e encontros com data marcada.',
+  Treino: 'Para divulgar treinos abertos, livres ou guiados em datas específicas.',
+  Pico: 'Para compartilhar lugares e horários em que a galera costuma se encontrar.',
+  Aula: 'Para professores e projetos divulgarem aulas, oficinas e cursos.',
+};
 // Chave da categoria usada nos dados salvos.
 const CHAVE_TIPO = { Evento: 'evento', Treino: 'treino', Pico: 'pico', Aula: 'aula' };
 
@@ -65,7 +80,9 @@ export default function Publicar() {
   const [valores, setValores] = useState({});
   // Programação de cada categoria, guardada separadamente para não se perder ao trocar de tipo.
   const [diasEvento, setDiasEvento] = useState(() => [novoDia()]);
-  const [semanalTreino, setSemanalTreino] = useState(novaSemanal);
+  const [diasTreino, setDiasTreino] = useState(() => [novoDia()]);
+  const [encontrosPico, setEncontrosPico] = useState({});
+  const [infoVisivel, setInfoVisivel] = useState(false);
   const [aula, setAula] = useState(() => ({
     formato: null,
     condicao: null,
@@ -94,7 +111,7 @@ export default function Publicar() {
         : { publicacao: { ...publicacao, programacao: r.programacao } };
     }
     if (tipo === 'Treino') {
-      const r = montarSemanal(semanalTreino);
+      const r = montarDias(diasTreino);
       return r.erros.length
         ? { erros: r.erros }
         : { publicacao: { ...publicacao, programacao: r.programacao } };
@@ -120,6 +137,13 @@ export default function Publicar() {
           condicao: aula.condicao,
           programacao: r.programacao,
         },
+      };
+    }
+    if (tipo === 'Pico') {
+      const r = montarEncontros(encontrosPico);
+      if (r.erros.length) return { erros: r.erros };
+      return {
+        publicacao: r.programacao ? { ...publicacao, programacao: r.programacao } : publicacao,
       };
     }
     return { publicacao };
@@ -157,7 +181,24 @@ export default function Publicar() {
       );
     }
     if (chave === 'programacao' && tipo === 'Treino') {
-      return <ProgramacaoSemanal valor={semanalTreino} aoMudar={setSemanalTreino} cor={corTipo} />;
+      return (
+        <View style={{ gap: 10 }}>
+          <Rotulo cor={cores.textoSuave}>Datas e horários</Rotulo>
+          <ListaDeDias dias={diasTreino} aoMudar={setDiasTreino} />
+        </View>
+      );
+    }
+    if (chave === 'programacao' && tipo === 'Pico') {
+      return (
+        <View style={{ gap: 10 }}>
+          <Rotulo cor={cores.textoSuave}>Dias e horários de encontro no pico</Rotulo>
+          <Text style={estilos.nota}>
+            Opcional. Os dias e horários em que a galera costuma colar, não o horário de
+            funcionamento do lugar.
+          </Text>
+          <ProgramacaoEncontros valor={encontrosPico} aoMudar={setEncontrosPico} cor={corTipo} />
+        </View>
+      );
     }
     if (chave === 'formatoAula') {
       return (
@@ -231,6 +272,17 @@ export default function Publicar() {
 
   return (
     <Tela>
+      <View style={estilos.topo}>
+        <Pressable
+          onPress={() => setInfoVisivel(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Qual publicação fazer?"
+          style={[estilos.botaoInfo, sombraAdesivo(cores.laranja)]}
+        >
+          <Ionicons name="information-circle-outline" size={22} color={cores.laranja} />
+        </Pressable>
+      </View>
+
       <TituloGrafite tamanho={42}>Avisar a cena</TituloGrafite>
 
       <View style={{ gap: 10 }}>
@@ -248,6 +300,7 @@ export default function Publicar() {
             </View>
           ))}
         </View>
+        <Text style={estilos.descricao}>{DESCRICOES[tipo]}</Text>
       </View>
 
       <Pressable
@@ -296,11 +349,34 @@ export default function Publicar() {
       <Text style={estilos.nota}>
         Versão de teste: o que você preencher aqui ainda não é enviado nem salvo.
       </Text>
+
+      <InfoPublicacao visivel={infoVisivel} aoFechar={() => setInfoVisivel(false)} />
     </Tela>
   );
 }
 
 const estilos = StyleSheet.create({
+  topo: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  // Mesmo desenho dos botões de notificações (Início) e configurações (Perfil).
+  botaoInfo: {
+    width: 46,
+    height: 46,
+    borderWidth: 2,
+    borderColor: cores.texto,
+    backgroundColor: cores.fundo,
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '3deg' }],
+  },
+  descricao: {
+    fontFamily: fontes.texto,
+    fontSize: 13,
+    lineHeight: 18,
+    color: cores.textoSuave,
+  },
   tipos: {
     flexDirection: 'row',
     gap: 8,

@@ -49,3 +49,9 @@ export const coresCategoria = {
   aula: '#A78BFA',
   todas: '#858585',
 };
+
+// Padrão aprovado dos dois cards de seleção da tela Início.
+export const coresAbasInicio = {
+  perto: { fundo: '#F28C28', texto: cores.fundo },
+  brasil: { fundo: '#299D58', texto: '#FFDF00' },
+};

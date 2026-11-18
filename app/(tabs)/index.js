@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { EstadoVazio, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
-import { cores, fontes, sombraAdesivo } from '../../src/theme';
+import { cores, coresAbasInicio, fontes, sombraAdesivo } from '../../src/theme';
 import { COR_NAO_LIDA, useNotificacoes } from '../../src/notificacoes';
 
 const logo = require('../../assets/logo.png');
@@ -50,12 +50,16 @@ export default function Inicio() {
           ativa={aba === 'perto'}
           aoTocar={() => setAba('perto')}
           inclinacao={-2}
+          corAtiva={coresAbasInicio.perto.fundo}
+          corTextoAtiva={coresAbasInicio.perto.texto}
         />
         <Etiqueta
           titulo="Cena Brasil"
           ativa={aba === 'brasil'}
           aoTocar={() => setAba('brasil')}
           inclinacao={1.5}
+          corAtiva={coresAbasInicio.brasil.fundo}
+          corTextoAtiva={coresAbasInicio.brasil.texto}
         />
       </View>
 

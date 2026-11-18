@@ -107,7 +107,14 @@ export function BotaoAdesivo({
 }
 
 // Etiqueta selecionável (filtros, tipo de publicação, papéis na cena).
-export function Etiqueta({ titulo, ativa, aoTocar, inclinacao = 0, corAtiva = cores.laranja }) {
+export function Etiqueta({
+  titulo,
+  ativa,
+  aoTocar,
+  inclinacao = 0,
+  corAtiva = cores.laranja,
+  corTextoAtiva = cores.fundo,
+}) {
   return (
     <Pressable
       onPress={aoTocar}
@@ -121,7 +128,7 @@ export function Etiqueta({ titulo, ativa, aoTocar, inclinacao = 0, corAtiva = co
         { transform: [{ rotate: `${inclinacao}deg` }] },
       ]}
     >
-      <Text style={[estilos.etiquetaTexto, { color: ativa ? cores.fundo : cores.texto }]}>
+      <Text style={[estilos.etiquetaTexto, { color: ativa ? corTextoAtiva : cores.texto }]}>
         {titulo}
       </Text>
     </Pressable>

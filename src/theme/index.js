@@ -11,8 +11,8 @@ export const cores = {
   textoSuave: '#C8C8CC',
   cinza: '#8E8E93',
   borda: '#3A3A3E',
-  // Grafite médio: mesmo tom das bordas, usado no fundo dos itens selecionados.
-  grafite: '#3A3A3E',
+  // Grafite médio, usado só no fundo dos itens selecionados (antes #3A3A3E).
+  grafite: '#48484D',
   laranja: '#FF6A1A',
   laranjaClaro: '#FF8A47',
   laranjaEscuro: '#B23E00',
@@ -55,7 +55,7 @@ export const coresCategoria = {
 };
 
 // Itens selecionados que antes eram laranja: fundo grafite médio com texto laranja.
-// O laranja #F28C28 dá contraste de 4,6:1 sobre o grafite (o #FF6A1A ficaria em 3,9:1).
+// Texto laranja #F28C28 sobre o grafite #48484D: contraste de 3,7:1.
 export const coresSelecao = { fundo: cores.grafite, texto: '#F28C28' };
 
 // Padrão aprovado dos dois cards de seleção da tela Início.

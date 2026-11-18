@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 import { CartaoPapel, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, fontes, sombraAdesivo } from '../../src/theme';
@@ -18,6 +20,7 @@ const PAPEIS = [
 const INCLINACOES = [-2, 1.5, -1, 1, -1.5, 2, -1, 1, -2];
 
 export default function Perfil() {
+  const router = useRouter();
   const [nome, setNome] = useState('');
   const [cidade, setCidade] = useState('');
   const [papeis, setPapeis] = useState([]);
@@ -61,6 +64,17 @@ export default function Perfil() {
           />
         </View>
       </View>
+
+      <Pressable
+        onPress={() => router.push('/configuracoes')}
+        accessibilityRole="button"
+        accessibilityLabel="Configurações"
+        style={({ pressed }) => [estilos.configuracoes, pressed && { opacity: 0.7 }]}
+      >
+        <Ionicons name="settings-outline" size={22} color={cores.laranja} />
+        <Text style={estilos.configuracoesTexto}>Configurações</Text>
+        <Ionicons name="chevron-forward" size={20} color={cores.textoSuave} />
+      </Pressable>
 
       <View style={{ gap: 10 }}>
         <Rotulo cor={cores.textoSuave}>Seus papéis na cena</Rotulo>
@@ -186,6 +200,23 @@ const estilos = StyleSheet.create({
     fontSize: 15,
     color: '#333333',
     marginTop: 6,
+  },
+  configuracoes: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    minHeight: 52,
+    borderWidth: 2,
+    borderColor: cores.laranja,
+    paddingHorizontal: 14,
+  },
+  configuracoesTexto: {
+    flex: 1,
+    fontFamily: fontes.bloco,
+    fontSize: 16,
+    letterSpacing: 1,
+    color: cores.texto,
+    textTransform: 'uppercase',
   },
   notificacoes: {
     borderWidth: 2,

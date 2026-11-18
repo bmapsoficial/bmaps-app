@@ -43,8 +43,8 @@ export default function Agenda() {
   return (
     <Tela fundo={0}>
       <View style={estilos.topo}>
-        {/* "Rolês" ocupa o espaço ao lado dos filtros, com recuo de 20%; só diminui se
-            não couber (iPhones menores). */}
+        {/* "Rolês" ocupa o espaço ao lado dos filtros; só diminui se não couber
+            (iPhones menores). */}
         <TituloGrafite
           tamanho={52}
           linhas={1}
@@ -138,12 +138,15 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
+  // Posição aprovada no ajuste fino: 14 px da borda esquerda da tela (4 px antes da
+  // margem do conteúdo) e 6 px abaixo da posição anterior.
   titulo: {
     flex: 1,
     minWidth: 0,
-    paddingLeft: '20%',
     paddingRight: 4,
     marginBottom: 0,
+    marginLeft: -4,
+    top: 6,
   },
   // Os filtros mantêm tamanho e área de toque; quem cede espaço é o título.
   filtros: {

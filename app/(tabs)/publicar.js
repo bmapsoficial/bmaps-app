@@ -340,12 +340,7 @@ export default function Publicar() {
         )}
       </View>
 
-      <BotaoAdesivo
-        titulo="Publicar e avisar a região"
-        aoTocar={aoPublicar}
-        inclinacao={-1}
-        largo
-      />
+      <BotaoAdesivo titulo="Publicar e avisar a cena" aoTocar={aoPublicar} inclinacao={-1} largo />
       <Text style={estilos.nota}>
         Versão de teste: o que você preencher aqui ainda não é enviado nem salvo.
       </Text>

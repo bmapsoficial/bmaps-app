@@ -95,7 +95,12 @@ const estilos = StyleSheet.create({
   // O texto já vem em maiúsculas (em vez de textTransform): no iOS, a largura era
   // medida com as letras minúsculas e o rótulo em maiúsculas ficava cortado nas pontas.
   // O respiro lateral evita que a primeira letra da fonte Anton encoste na borda.
+  // O rótulo ocupa toda a largura da coluna (alignSelf: 'stretch') em vez de uma
+  // caixa do tamanho exato do texto: com a fonte Anton e o espaçamento entre letras,
+  // o iOS calculava essa caixa mais estreita que as letras e cortava as pontas
+  // (o "M" de MAPA e o "A" de AGENDA). Centralizado dentro da coluna, nada é cortado.
   rotulo: {
+    alignSelf: 'stretch',
     fontFamily: fontes.bloco,
     fontSize: 12,
     letterSpacing: 1,

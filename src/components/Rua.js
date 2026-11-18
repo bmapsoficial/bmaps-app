@@ -48,7 +48,10 @@ export function Tela({ children, rolagem = true }) {
 export function TituloGrafite({ children, tamanho = 46, escorridos = true }) {
   return (
     <View style={{ marginBottom: escorridos ? 18 : 6 }}>
-      <Text style={[estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.05 }]}>
+      {/* A altura de linha precisa ser maior que o tamanho da fonte: a letra de grafite
+          (Sedgwick Ave Display) é mais alta que o normal e, com a linha justa (1,05),
+          o iOS cortava o topo das letras, como o "O" de "O que tá rolando". */}
+      <Text style={[estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.3 }]}>
         {children}
       </Text>
       {escorridos && (

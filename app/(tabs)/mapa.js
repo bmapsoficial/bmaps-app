@@ -4,15 +4,15 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
-import { cores, fontes, sombraAdesivo } from '../../src/theme';
+import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
 
 // Cada filtro, quando selecionado, usa a cor da própria categoria.
 const FILTROS = [
-  { nome: 'Todos', cor: '#858585' },
-  { nome: 'Eventos', cor: '#F28C28' },
-  { nome: 'Treinos', cor: '#35C5E8' },
-  { nome: 'Picos', cor: '#299D58' },
-  { nome: 'Aulas', cor: '#A78BFA' },
+  { nome: 'Todos', cor: coresCategoria.todas },
+  { nome: 'Eventos', cor: coresCategoria.evento },
+  { nome: 'Treinos', cor: coresCategoria.treino },
+  { nome: 'Picos', cor: coresCategoria.pico },
+  { nome: 'Aulas', cor: coresCategoria.aula },
 ];
 const INCLINACOES = [-2, 1, -1, 1.5, -1];
 

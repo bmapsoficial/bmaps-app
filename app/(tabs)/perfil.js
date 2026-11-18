@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { CartaoPapel, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
-import { cores, fontes, sombraAdesivo } from '../../src/theme';
+import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
 
 const PAPEIS = [
   'B-boy',
@@ -93,9 +93,9 @@ export default function Perfil() {
 
       <View style={estilos.numeros}>
         {[
-          ['—', 'Eventos publicados', cores.laranja],
+          ['—', 'Eventos publicados', coresCategoria.evento],
           ['—', 'Confirmados pela cena', cores.verdeClaro],
-          ['—', 'Check-ins em picos', cores.laranja],
+          ['—', 'Check-ins em picos', coresCategoria.pico],
         ].map(([valor, legenda, cor], i) => (
           <View
             key={legenda}

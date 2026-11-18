@@ -3,7 +3,7 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons';
 
 import { BotaoAdesivo, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
-import { cores, fontes } from '../../src/theme';
+import { cores, coresCategoria, fontes } from '../../src/theme';
 
 // Campos de cada tipo, seguindo o documento de conceito.
 const TIPOS = {
@@ -33,6 +33,13 @@ const TIPOS = {
   ],
 };
 const NOMES_TIPOS = Object.keys(TIPOS);
+// Cor de destaque de cada tipo quando selecionado (padrão oficial das categorias).
+const COR_TIPO = {
+  Evento: coresCategoria.evento,
+  Treino: coresCategoria.treino,
+  Pico: coresCategoria.pico,
+  Aula: coresCategoria.aula,
+};
 const INCLINACOES = [-3, 1, -1, 2];
 
 export default function Publicar() {
@@ -61,6 +68,7 @@ export default function Publicar() {
                 ativa={tipo === nome}
                 aoTocar={() => setTipo(nome)}
                 inclinacao={INCLINACOES[i]}
+                corAtiva={COR_TIPO[nome]}
               />
             </View>
           ))}

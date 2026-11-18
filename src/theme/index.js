@@ -37,3 +37,15 @@ export const sombraAdesivo = (cor = cores.texto, distancia = 3) => ({
   shadowRadius: 0,
   elevation: 0,
 });
+
+// Cores oficiais das categorias do B-Maps. São a identidade fixa de cada tipo
+// em todo o app (filtros, legendas, marcadores, publicações, listas, detalhes).
+// Os marcadores em assets/marcadores/*.svg usam exatamente estas cores.
+// `todas` é usada só quando o filtro mostra todas as categorias juntas.
+export const coresCategoria = {
+  evento: '#F28C28',
+  treino: '#35C5E8',
+  pico: '#299D58',
+  aula: '#A78BFA',
+  todas: '#858585',
+};

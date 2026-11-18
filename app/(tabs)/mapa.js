@@ -1,16 +1,32 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, fontes, sombraAdesivo } from '../../src/theme';
 
-const FILTROS = ['Tudo', 'Eventos', 'Treinos', 'Picos', 'Aulas'];
+// Cada filtro, quando selecionado, usa a cor da própria categoria.
+const FILTROS = [
+  { nome: 'Todos', cor: '#858585' },
+  { nome: 'Eventos', cor: '#F28C28' },
+  { nome: 'Treinos', cor: '#35C5E8' },
+  { nome: 'Picos', cor: '#299D58' },
+  { nome: 'Aulas', cor: '#A78BFA' },
+];
 const INCLINACOES = [-2, 1, -1, 1.5, -1];
+
+// Legenda: os mesmos arquivos SVG dos marcadores do mapa.
+const LEGENDA = [
+  { nome: 'Evento', marcador: require('../../assets/marcadores/evento.svg') },
+  { nome: 'Treino', marcador: require('../../assets/marcadores/treino.svg') },
+  { nome: 'Pico', marcador: require('../../assets/marcadores/pico.svg') },
+  { nome: 'Aula', marcador: require('../../assets/marcadores/aula.svg') },
+];
 
 export default function Mapa() {
   const [busca, setBusca] = useState('');
-  const [filtro, setFiltro] = useState('Tudo');
+  const [filtro, setFiltro] = useState('Todos');
 
   return (
     <Tela>
@@ -30,13 +46,14 @@ export default function Mapa() {
       </View>
 
       <View style={estilos.filtros}>
-        {FILTROS.map((nome, i) => (
+        {FILTROS.map(({ nome, cor }, i) => (
           <Etiqueta
             key={nome}
             titulo={nome}
             ativa={filtro === nome}
             aoTocar={() => setFiltro(nome)}
             inclinacao={INCLINACOES[i]}
+            corAtiva={cor}
           />
         ))}
       </View>
@@ -51,27 +68,18 @@ export default function Mapa() {
       </View>
 
       <View style={estilos.legenda}>
-        <View style={estilos.legendaItem}>
-          <View style={[estilos.marca, { backgroundColor: cores.laranja }]} />
-          <Text style={estilos.legendaTexto}>Evento</Text>
-        </View>
-        <View style={estilos.legendaItem}>
-          <View style={[estilos.marca, { backgroundColor: cores.texto }]} />
-          <Text style={estilos.legendaTexto}>Treino</Text>
-        </View>
-        <View style={estilos.legendaItem}>
-          <View
-            style={[
-              estilos.marca,
-              { borderWidth: 2, borderStyle: 'dashed', borderColor: cores.verdeClaro },
-            ]}
-          />
-          <Text style={estilos.legendaTexto}>Pico</Text>
-        </View>
-        <View style={estilos.legendaItem}>
-          <View style={[estilos.marca, { borderWidth: 2, borderColor: cores.cinza }]} />
-          <Text style={estilos.legendaTexto}>Aula</Text>
-        </View>
+        {LEGENDA.map(({ nome, marcador }) => (
+          <View key={nome} style={estilos.legendaItem}>
+            <Image
+              source={marcador}
+              style={estilos.marca}
+              contentFit="contain"
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
+            <Text style={estilos.legendaTexto}>{nome}</Text>
+          </View>
+        ))}
       </View>
     </Tela>
   );
@@ -135,9 +143,10 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
+  // Mesma proporção dos marcadores (48 × 64).
   marca: {
-    width: 12,
-    height: 12,
+    width: 18,
+    height: 24,
   },
   legendaTexto: {
     fontFamily: fontes.bloco,

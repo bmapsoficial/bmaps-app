@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { EstadoVazio, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
+import { EstadoVazio, Etiqueta, Tela, TituloChamada } from '../../src/components/Rua';
 import { cores, fontes, sombraAdesivo } from '../../src/theme';
 
 const DIAS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
@@ -43,11 +43,9 @@ export default function Agenda() {
   return (
     <Tela>
       <View style={estilos.topo}>
-        {/* O título ocupa só o espaço que sobra ao lado dos filtros: quebra em duas
-            linhas e, se ainda não couber (iPhones menores), diminui. Nunca aumenta. */}
-        <TituloGrafite tamanho={40} escorridos={false} linhas={2} ajustar estilo={estilos.titulo}>
-          Próximos rolês
-        </TituloGrafite>
+        {/* "Próximos" pequeno como chamada e "rolês" como protagonista. O bloco usa só
+            o espaço ao lado dos filtros; "rolês" diminui apenas se não couber. */}
+        <TituloChamada chamada="Próximos" principal="rolês" tamanho={52} estilo={estilos.titulo} />
         <View style={estilos.filtros}>
           <Etiqueta
             titulo="Tudo"

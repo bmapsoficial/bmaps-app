@@ -272,7 +272,11 @@ export default function Publicar() {
 
   return (
     <Tela>
+      {/* Título e botão de informações na mesma linha, centralizados na vertical. */}
       <View style={estilos.topo}>
+        <TituloGrafite tamanho={42} linhas={1} ajustar estilo={estilos.titulo}>
+          Avisar a cena
+        </TituloGrafite>
         <Pressable
           onPress={() => setInfoVisivel(true)}
           accessibilityRole="button"
@@ -282,8 +286,6 @@ export default function Publicar() {
           <Ionicons name="information-circle-outline" size={22} color={cores.laranja} />
         </Pressable>
       </View>
-
-      <TituloGrafite tamanho={42}>Avisar a cena</TituloGrafite>
 
       <View style={{ gap: 10 }}>
         <Rotulo cor={cores.textoSuave}>O que vai rolar?</Rotulo>
@@ -353,7 +355,14 @@ export default function Publicar() {
 const estilos = StyleSheet.create({
   topo: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  titulo: {
+    flex: 1,
+    minWidth: 0,
+    marginBottom: 0,
   },
   // Mesmo desenho dos botões de notificações (Início) e configurações (Perfil).
   botaoInfo: {

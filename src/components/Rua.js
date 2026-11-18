@@ -6,7 +6,6 @@ import { cores, fontes, sombraAdesivo } from '../theme';
 
 // Respingos de tinta decorativos espalhados no fundo da tela.
 const RESPINGOS = [
-  { top: 70, left: 40, size: 5, cor: cores.laranja, opacity: 0.35 },
   { top: 180, left: 330, size: 3, cor: cores.texto, opacity: 0.15 },
   { top: 320, left: 20, size: 4, cor: cores.laranja, opacity: 0.25 },
   { top: 460, left: 300, size: 6, cor: cores.laranja, opacity: 0.2 },

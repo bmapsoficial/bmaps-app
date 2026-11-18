@@ -4,10 +4,10 @@
   <path d="M24 2C12.4 2 3 11.4 3 23c0 15.2 21 39 21 39s21-23.8 21-39C45 11.4 35.6 2 24 2z" fill="#299D58" stroke="#F5F5F5" stroke-width="2.5" stroke-linejoin="round"/>
   <!-- Símbolo interno, centralizado na cabeça do marcador -->
   <g fill="#0E0E0F" stroke="#0E0E0F">
-    <circle cx="22" cy="13.6" r="3" stroke="none"/>
-    <path d="M22 19v7.5" fill="none" stroke-width="4.6" stroke-linecap="round"/>
-    <path d="M21.6 26.2 19.4 34M22.4 26.2 24.6 34" fill="none" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M21.4 19.6 18.4 25.6" fill="none" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M22.6 19.4 29 12.2" fill="none" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="24" cy="14.2" r="3" stroke="none"/>
+    <rect x="21" y="18.4" width="6" height="9.4" rx="2.4" stroke="none"/>
+    <path d="M22.4 27 21.6 34.4M25.6 27 26.4 34.4" fill="none" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M21.6 19.8 19.6 27.2" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M26.6 19.6 30.4 11.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
   </g>
 </svg>

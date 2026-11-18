@@ -11,6 +11,8 @@ export const cores = {
   textoSuave: '#C8C8CC',
   cinza: '#8E8E93',
   borda: '#3A3A3E',
+  // Grafite médio: mesmo tom das bordas, usado no fundo dos itens selecionados.
+  grafite: '#3A3A3E',
   laranja: '#FF6A1A',
   laranjaClaro: '#FF8A47',
   laranjaEscuro: '#B23E00',
@@ -52,9 +54,12 @@ export const coresCategoria = {
   todas: cores.laranja,
 };
 
-// Padrão aprovado dos dois cards de seleção da tela Início. Perto de mim usa o
-// laranja oficial, como na proposta visual aprovada.
+// Itens selecionados que antes eram laranja: fundo grafite médio com texto laranja.
+// O laranja #F28C28 dá contraste de 4,6:1 sobre o grafite (o #FF6A1A ficaria em 3,9:1).
+export const coresSelecao = { fundo: cores.grafite, texto: '#F28C28' };
+
+// Padrão aprovado dos dois cards de seleção da tela Início.
 export const coresAbasInicio = {
-  perto: { fundo: cores.laranja, texto: cores.fundo },
+  perto: coresSelecao,
   brasil: { fundo: '#299D58', texto: '#FFDF00' },
 };

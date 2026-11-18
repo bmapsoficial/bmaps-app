@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { BlocoSpray, EstadoVazio, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
-import { cores, fontes, sombraAdesivo } from '../../src/theme';
+import { cores, coresSelecao, fontes, sombraAdesivo } from '../../src/theme';
 
 const DIAS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 const MESES = [
@@ -57,7 +57,7 @@ export default function Agenda() {
         </TituloGrafite>
         <View style={estilos.filtros}>
           <Etiqueta
-            titulo="Tudo"
+            titulo="Todos"
             ativa={filtro === 'tudo'}
             aoTocar={() => setFiltro('tudo')}
             inclinacao={-2}
@@ -96,12 +96,19 @@ export default function Agenda() {
               ]}
             >
               {ativo ? (
-                <BlocoSpray cor={cores.laranja} corSombra={cores.texto} distancia={3} />
+                <BlocoSpray cor={coresSelecao.fundo} corSombra={cores.texto} distancia={3} />
               ) : null}
-              <Text style={[estilos.diaSemana, { color: ativo ? cores.fundo : cores.textoSuave }]}>
+              <Text
+                style={[
+                  estilos.diaSemana,
+                  { color: ativo ? coresSelecao.texto : cores.textoSuave },
+                ]}
+              >
                 {d.semana}
               </Text>
-              <Text style={[estilos.diaNumero, { color: ativo ? cores.fundo : cores.texto }]}>
+              <Text
+                style={[estilos.diaNumero, { color: ativo ? coresSelecao.texto : cores.texto }]}
+              >
                 {d.dia}
               </Text>
             </Pressable>

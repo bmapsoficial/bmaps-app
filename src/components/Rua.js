@@ -4,7 +4,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { cores, fontes, sombraAdesivo } from '../theme';
+import { cores, coresSelecao, fontes, sombraAdesivo } from '../theme';
 
 // Texturas de spray (pacote de texturas do projeto, reduzidas e pintadas no laranja oficial).
 // O bloco "rasgado" é branco para ser tingido com tintColor em qualquer cor de categoria.
@@ -290,7 +290,8 @@ export function BotaoAdesivo({
 }
 
 // Etiqueta selecionável (filtros, tipo de publicação, papéis na cena).
-// Selecionada: bloco de spray rasgado na cor da categoria, com sombra grafite preta.
+// Selecionada: bloco de spray rasgado com sombra grafite preta, na cor da categoria
+// ou, por padrão, em grafite médio com texto laranja.
 // Não selecionada: fundo preto, contorno branco e sombra preta.
 // `alta`: versão maior, usada nas abas Perto de mim / Cena Brasil.
 // `compacta`: menos respiro lateral, para várias etiquetas dividirem uma linha (Mapa);
@@ -300,11 +301,14 @@ export function Etiqueta({
   ativa,
   aoTocar,
   inclinacao = 0,
-  corAtiva = cores.laranja,
-  corTextoAtiva = cores.fundo,
+  corAtiva = coresSelecao.fundo,
+  corTextoAtiva,
   alta = false,
   compacta = false,
 }) {
+  // Sem cor de texto definida: laranja sobre o grafite padrão, escuro sobre cores de categoria.
+  const textoAtivo =
+    corTextoAtiva ?? (corAtiva === coresSelecao.fundo ? coresSelecao.texto : cores.fundo);
   return (
     <Pressable
       onPress={aoTocar}
@@ -326,7 +330,7 @@ export function Etiqueta({
         style={[
           estilos.etiquetaTexto,
           alta && { fontSize: 17 },
-          { color: ativa ? corTextoAtiva : cores.texto },
+          { color: ativa ? textoAtivo : cores.texto },
         ]}
       >
         {titulo}

@@ -4,39 +4,55 @@ import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Tela, TituloGrafite } from '../src/components/Rua';
-import { cores, fontes, sombraAdesivo } from '../src/theme';
+import {
+  cores,
+  coresAbasInicio,
+  coresCategoria,
+  coresSelecao,
+  fontes,
+  sombraAdesivo,
+} from '../src/theme';
 
 // Seções previstas. Nesta etapa nenhuma delas tem função: são só a estrutura,
 // sem toque, sem seta e com o selo EM BREVE. Cada uma vira um botão de verdade
 // quando a sua função for implementada.
+// Cada seção tem a cor do seu ícone, reaproveitando as cores oficiais do projeto:
+// laranja #F28C28 (o mesmo do texto selecionado), verde (pico), amarelo (texto da Cena Brasil), azul (treino),
+// roxo (aula) e cinza grafite do tema (o grafite das bordas, #3A3A3E, quase some sobre o card).
 const SECOES = [
   {
     titulo: 'Conta',
+    cor: coresSelecao.texto,
     icone: 'person-circle-outline',
     descricao: 'E-mail, senha, sair e excluir conta.',
   },
   {
     titulo: 'Privacidade',
+    cor: coresCategoria.pico,
     icone: 'lock-closed-outline',
     descricao: '“Vou colar” sem mostrar o nome e os seus dados (LGPD).',
   },
   {
     titulo: 'Localização',
+    cor: coresAbasInicio.brasil.texto,
     icone: 'location-outline',
     descricao: 'Permissão de localização e cidade padrão.',
   },
   {
     titulo: 'Notificações',
+    cor: coresCategoria.treino,
     icone: 'notifications-outline',
     descricao: 'Regiões, tipos de aviso e resumo diário.',
   },
   {
     titulo: 'Aparência',
+    cor: coresCategoria.aula,
     icone: 'color-palette-outline',
     descricao: 'Ajustes visuais do app.',
   },
   {
     titulo: 'Ajuda e suporte',
+    cor: cores.cinza,
     icone: 'help-circle-outline',
     descricao: 'Dúvidas, contato com a equipe e termos de uso.',
   },
@@ -79,7 +95,7 @@ export default function Configuracoes() {
             accessibilityLabel={`${secao.titulo}. ${secao.descricao} Em breve.`}
             style={estilos.secao}
           >
-            <View style={estilos.icone}>
+            <View style={[estilos.icone, { backgroundColor: secao.cor }]}>
               <Ionicons name={secao.icone} size={22} color={cores.fundo} />
             </View>
             <View style={{ flex: 1, gap: 2 }}>

@@ -41,6 +41,17 @@ export default function Perfil() {
 
   return (
     <Tela>
+      <View style={estilos.topo}>
+        <Pressable
+          onPress={() => router.push('/configuracoes')}
+          accessibilityRole="button"
+          accessibilityLabel="Configurações"
+          style={[estilos.botaoConfiguracoes, sombraAdesivo(cores.laranja)]}
+        >
+          <Ionicons name="settings-outline" size={20} color={cores.texto} />
+        </Pressable>
+      </View>
+
       <View style={estilos.cabecalho}>
         <View style={[estilos.avatar, sombraAdesivo(cores.texto, 4)]}>
           <Text style={estilos.avatarTexto}>{iniciais}</Text>
@@ -64,17 +75,6 @@ export default function Perfil() {
           />
         </View>
       </View>
-
-      <Pressable
-        onPress={() => router.push('/configuracoes')}
-        accessibilityRole="button"
-        accessibilityLabel="Configurações"
-        style={({ pressed }) => [estilos.configuracoes, pressed && { opacity: 0.7 }]}
-      >
-        <Ionicons name="settings-outline" size={22} color={cores.laranja} />
-        <Text style={estilos.configuracoesTexto}>Configurações</Text>
-        <Ionicons name="chevron-forward" size={20} color={cores.textoSuave} />
-      </Pressable>
 
       <View style={{ gap: 10 }}>
         <Rotulo cor={cores.textoSuave}>Seus papéis na cena</Rotulo>
@@ -201,22 +201,20 @@ const estilos = StyleSheet.create({
     color: '#333333',
     marginTop: 6,
   },
-  configuracoes: {
+  topo: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    minHeight: 52,
-    borderWidth: 2,
-    borderColor: cores.laranja,
-    paddingHorizontal: 14,
+    justifyContent: 'flex-end',
   },
-  configuracoesTexto: {
-    flex: 1,
-    fontFamily: fontes.bloco,
-    fontSize: 16,
-    letterSpacing: 1,
-    color: cores.texto,
-    textTransform: 'uppercase',
+  // Mesmo desenho do sininho da tela Início.
+  botaoConfiguracoes: {
+    width: 46,
+    height: 46,
+    borderWidth: 2,
+    borderColor: cores.texto,
+    backgroundColor: cores.fundo,
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ rotate: '3deg' }],
   },
   notificacoes: {
     borderWidth: 2,

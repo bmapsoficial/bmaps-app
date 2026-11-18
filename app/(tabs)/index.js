@@ -5,12 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { EstadoVazio, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, fontes, sombraAdesivo } from '../../src/theme';
+import { COR_NAO_LIDA, useNotificacoes } from '../../src/notificacoes';
 
 const logo = require('../../assets/logo.png');
 
 export default function Inicio() {
   const router = useRouter();
   const [aba, setAba] = useState('perto');
+  const { naoLidas } = useNotificacoes();
 
   return (
     <Tela>
@@ -24,11 +26,16 @@ export default function Inicio() {
           accessibilityLabel="B-Maps"
         />
         <Pressable
+          onPress={() => router.push('/notificacoes')}
           accessibilityRole="button"
-          accessibilityLabel="Notificações"
+          accessibilityLabel={naoLidas > 0 ? `Notificações, ${naoLidas} não lidas` : 'Notificações'}
           style={[estilos.sino, sombraAdesivo(cores.laranja)]}
         >
-          <Ionicons name="notifications-outline" size={20} color={cores.texto} />
+          <Ionicons
+            name="notifications-outline"
+            size={20}
+            color={naoLidas > 0 ? COR_NAO_LIDA : cores.texto}
+          />
         </Pressable>
       </View>
 

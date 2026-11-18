@@ -45,7 +45,13 @@ export default function Agenda() {
       <View style={estilos.topo}>
         {/* "Próximos" pequeno como chamada e "rolês" como protagonista. O bloco usa só
             o espaço ao lado dos filtros; "rolês" diminui apenas se não couber. */}
-        <TituloChamada chamada="Próximos" principal="rolês" tamanho={52} estilo={estilos.titulo} />
+        <TituloChamada
+          chamada="Próximos"
+          principal="rolês"
+          tamanho={52}
+          recuo="20%"
+          estilo={estilos.titulo}
+        />
         <View style={estilos.filtros}>
           <Etiqueta
             titulo="Tudo"

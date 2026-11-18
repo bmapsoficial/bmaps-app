@@ -86,7 +86,16 @@ export function TituloGrafite({
 // Título em dois níveis: uma chamada pequena em cima e a palavra principal grande
 // embaixo (ex.: "Próximos" / "rolês"). As duas linhas giram juntas, alinhadas à
 // esquerda. `tamanho` é o máximo da palavra principal: ela só diminui para caber.
-export function TituloChamada({ chamada, principal, tamanho = 52, proporcao = 0.42, estilo }) {
+// `recuo` desloca só a palavra principal para a direita (ex.: '20%' da largura do bloco);
+// a fonte dela se ajusta ao espaço que sobra, então nada é cortado.
+export function TituloChamada({
+  chamada,
+  principal,
+  tamanho = 52,
+  proporcao = 0.42,
+  recuo = 0,
+  estilo,
+}) {
   const tamanhoChamada = Math.round(tamanho * proporcao);
   return (
     <View style={[estilos.tituloChamada, estilo]}>
@@ -106,18 +115,20 @@ export function TituloChamada({ chamada, principal, tamanho = 52, proporcao = 0.
       >
         {chamada}
       </Text>
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={0.6}
-        style={[
-          estilos.tituloGrafite,
-          estilos.semGiro,
-          { fontSize: tamanho, lineHeight: tamanho * 1.3, marginTop: -tamanho * 0.12 },
-        ]}
-      >
-        {principal}
-      </Text>
+      <View style={{ paddingLeft: recuo }}>
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.6}
+          style={[
+            estilos.tituloGrafite,
+            estilos.semGiro,
+            { fontSize: tamanho, lineHeight: tamanho * 1.3, marginTop: -tamanho * 0.12 },
+          ]}
+        >
+          {principal}
+        </Text>
+      </View>
     </View>
   );
 }

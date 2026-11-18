@@ -3,7 +3,14 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { CartaoPapel, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
+import {
+  CartaoPapel,
+  Etiqueta,
+  Respingo,
+  Rotulo,
+  Tela,
+  TituloGrafite,
+} from '../../src/components/Rua';
 import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
 
 const PAPEIS = [
@@ -40,25 +47,34 @@ export default function Perfil() {
       .join('') || '?';
 
   return (
-    <Tela>
+    <Tela fundo={1}>
       {/* Mesmo cabeçalho da tela Avisar a cena: título à esquerda e botão à direita. */}
       <View style={estilos.topo}>
-        <TituloGrafite tamanho={42} linhas={1} ajustar estilo={estilos.titulo}>
+        <TituloGrafite
+          tamanho={42}
+          linhas={1}
+          ajustar
+          gotas={[0.064, 0.45, 0.937]}
+          estilo={estilos.titulo}
+        >
           Meu corre
         </TituloGrafite>
         <Pressable
           onPress={() => router.push('/configuracoes')}
           accessibilityRole="button"
           accessibilityLabel="Configurações"
-          style={[estilos.botaoConfiguracoes, sombraAdesivo(cores.laranja)]}
+          style={[estilos.botaoConfiguracoes, sombraAdesivo(cores.laranja, 4)]}
         >
           <Ionicons name="settings-outline" size={20} color={cores.texto} />
         </Pressable>
       </View>
 
       <View style={estilos.cabecalho}>
-        <View style={[estilos.avatar, sombraAdesivo(cores.texto, 4)]}>
-          <Text style={estilos.avatarTexto}>{iniciais}</Text>
+        <View>
+          <Respingo tipo={2} largura={60} estilo={estilos.avatarRespingo} />
+          <View style={[estilos.avatar, sombraAdesivo(cores.texto, 4)]}>
+            <Text style={estilos.avatarTexto}>{iniciais}</Text>
+          </View>
         </View>
         <View style={{ flex: 1, gap: 8 }}>
           <TextInput
@@ -103,7 +119,11 @@ export default function Perfil() {
         ].map(([valor, legenda, cor], i) => (
           <View
             key={legenda}
-            style={[estilos.numero, { transform: [{ rotate: `${[-1.5, 1, -0.5][i]}deg` }] }]}
+            style={[
+              estilos.numero,
+              sombraAdesivo('#000000', 3),
+              { transform: [{ rotate: `${[-1.5, 1, -0.5][i]}deg` }] },
+            ]}
           >
             <Text style={[estilos.numeroValor, { color: cor }]}>{valor}</Text>
             <Text style={estilos.numeroLegenda}>{legenda}</Text>
@@ -165,7 +185,7 @@ const estilos = StyleSheet.create({
   papeis: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
   },
   numeros: {
     flexDirection: 'row',
@@ -175,9 +195,15 @@ const estilos = StyleSheet.create({
     flex: 1,
     borderWidth: 2,
     borderColor: cores.texto,
+    backgroundColor: 'rgba(11,11,12,0.9)',
     paddingVertical: 10,
     paddingHorizontal: 6,
     alignItems: 'center',
+  },
+  avatarRespingo: {
+    left: -18,
+    top: -16,
+    opacity: 0.9,
   },
   numeroValor: {
     fontFamily: fontes.grafite,
@@ -211,10 +237,12 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
+  // Recuo do título aprovado na proposta visual.
   titulo: {
     flex: 1,
     minWidth: 0,
     marginBottom: 0,
+    marginLeft: 63,
   },
   // Mesmo desenho do sininho da tela Início.
   botaoConfiguracoes: {

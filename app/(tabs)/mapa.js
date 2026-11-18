@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
+import { CartaoPapel, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, coresCategoria, fontes, sombraAdesivo } from '../../src/theme';
 
 // Cada filtro, quando selecionado, usa a cor da própria categoria.
@@ -29,13 +29,13 @@ export default function Mapa() {
   const [filtro, setFiltro] = useState('Todos');
 
   return (
-    <Tela>
+    <Tela fundo={1}>
       {/* Sempre em uma linha: começa em 44 e só diminui se a largura da tela não comportar. */}
-      <TituloGrafite tamanho={44} escorridos={false} linhas={1} ajustar>
+      <TituloGrafite tamanho={40} linhas={1} ajustar gotas={[0.024, 0.319, 0.703, 0.979]}>
         Onde acontece a cena
       </TituloGrafite>
 
-      <View style={[estilos.busca, sombraAdesivo(cores.laranja)]}>
+      <View style={[estilos.busca, sombraAdesivo(cores.laranja, 4)]}>
         <Ionicons name="search" size={20} color={cores.laranja} />
         <TextInput
           value={busca}
@@ -62,13 +62,22 @@ export default function Mapa() {
       </View>
 
       {/* Espaço reservado: o mapa real entra numa próxima etapa. */}
-      <View style={estilos.areaMapa}>
-        <Ionicons name="map-outline" size={40} color={cores.laranja} />
-        <Text style={estilos.avisoTitulo}>O mapa entra na próxima etapa</Text>
-        <Text style={estilos.avisoTexto}>
-          Aqui vão aparecer os eventos, treinos, picos e aulas perto de você, com a sua localização.
-        </Text>
-      </View>
+      <CartaoPapel inclinacao={-0.6}>
+        <View style={estilos.areaMapa}>
+          <Image
+            source={LEGENDA[0].marcador}
+            style={estilos.marcaGrande}
+            contentFit="contain"
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+          />
+          <Text style={estilos.avisoTitulo}>O mapa entra na próxima etapa</Text>
+          <Text style={estilos.avisoTexto}>
+            Aqui vão aparecer os eventos, treinos, picos e aulas perto de você, com a sua
+            localização.
+          </Text>
+        </View>
+      </CartaoPapel>
 
       <View style={estilos.legenda}>
         {LEGENDA.map(({ nome, marcador }) => (
@@ -109,23 +118,24 @@ const estilos = StyleSheet.create({
   filtros: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-  },
-  areaMapa: {
-    minHeight: 280,
-    borderWidth: 3,
-    borderStyle: 'dashed',
-    borderColor: cores.laranja,
-    backgroundColor: cores.cartao,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
     gap: 10,
+  },
+  // Espaço reservado do mapa, dentro de um cartão de papel (proposta visual aprovada).
+  areaMapa: {
+    alignItems: 'center',
+    gap: 10,
+    paddingTop: 18,
+    paddingBottom: 8,
+  },
+  marcaGrande: {
+    width: 36,
+    height: 48,
   },
   avisoTitulo: {
     fontFamily: fontes.bloco,
-    fontSize: 20,
-    color: cores.texto,
+    fontSize: 21,
+    lineHeight: 26,
+    color: cores.textoPapel,
     textTransform: 'uppercase',
     textAlign: 'center',
   },
@@ -133,13 +143,14 @@ const estilos = StyleSheet.create({
     fontFamily: fontes.texto,
     fontSize: 14,
     lineHeight: 20,
-    color: cores.textoSuave,
+    color: '#2B2B2B',
     textAlign: 'center',
   },
   legenda: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 16,
+    marginTop: 8,
   },
   legendaItem: {
     flexDirection: 'row',

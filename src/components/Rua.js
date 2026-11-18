@@ -1,19 +1,63 @@
 // Peças visuais da versão rua do B-Maps, reaproveitadas em todas as telas.
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cores, fontes, sombraAdesivo } from '../theme';
 
-// Respingos de tinta decorativos espalhados no fundo da tela.
-const RESPINGOS = [
-  { top: 180, left: 330, size: 3, cor: cores.texto, opacity: 0.15 },
-  { top: 320, left: 20, size: 4, cor: cores.laranja, opacity: 0.25 },
-  { top: 460, left: 300, size: 6, cor: cores.laranja, opacity: 0.2 },
-  { top: 600, left: 120, size: 3, cor: cores.texto, opacity: 0.12 },
-  { top: 720, left: 350, size: 4, cor: cores.laranja, opacity: 0.3 },
+// Texturas de spray (pacote de texturas do projeto, reduzidas e pintadas no laranja oficial).
+// O bloco "rasgado" é branco para ser tingido com tintColor em qualquer cor de categoria.
+const TEXTURAS = {
+  ruas: require('../../assets/texturas/ruas.png'),
+  papelLinhas: require('../../assets/texturas/papel-linhas.png'),
+  pincel: require('../../assets/texturas/pincel.png'),
+  faixa: require('../../assets/texturas/faixa.png'),
+  bloco: require('../../assets/texturas/bloco.png'),
+  respingos: [
+    require('../../assets/texturas/respingo-1.png'),
+    require('../../assets/texturas/respingo-2.png'),
+    require('../../assets/texturas/respingo-3.png'),
+    require('../../assets/texturas/respingo-4.png'),
+  ],
+};
+// Escorridos e a proporção altura/largura de cada um (para não distorcer).
+const GOTAS = [
+  { fonte: require('../../assets/texturas/gota-5.png'), proporcao: 86 / 40 },
+  { fonte: require('../../assets/texturas/gota-2.png'), proporcao: 69 / 48 },
+  { fonte: require('../../assets/texturas/gota-4.png'), proporcao: 62 / 48 },
+  { fonte: require('../../assets/texturas/gota-1.png'), proporcao: 81 / 48 },
+  { fonte: require('../../assets/texturas/gota-3.png'), proporcao: 60 / 48 },
+  { fonte: require('../../assets/texturas/gota-6.png'), proporcao: 61 / 56 },
+];
+// Proporção altura/largura das demais texturas.
+const PROPORCAO = {
+  pincel: 211 / 440,
+  faixa: 293 / 420,
+  respingos: [333 / 380, 415 / 380, 234 / 240, 275 / 260],
+};
+
+// Respingos grandes do fundo, como na proposta aprovada. Três arranjos, um por tela,
+// para não repetir. Cada item: [respingo, esquerda, topo, largura, giro, opacidade].
+const FUNDOS = [
+  [
+    [1, -70, -60, 190, 0, 0.55],
+    [0, 292, 410, 150, 20, 0.4],
+    [3, -46, 600, 120, 0, 0.3],
+  ],
+  [
+    [0, -60, -50, 170, -15, 0.5],
+    [1, 296, 330, 150, 30, 0.35],
+    [3, -40, 640, 110, 10, 0.3],
+  ],
+  [
+    [3, 300, -40, 150, 0, 0.45],
+    [1, -70, 380, 150, -20, 0.35],
+    [0, 300, 640, 120, 0, 0.3],
+  ],
 ];
 
-export function Tela({ children, rolagem = true }) {
+export function Tela({ children, rolagem = true, fundo = 0 }) {
   const Conteudo = rolagem ? ScrollView : View;
   const propsConteudo = rolagem
     ? { contentContainerStyle: estilos.conteudo, keyboardShouldPersistTaps: 'handled' }
@@ -22,18 +66,19 @@ export function Tela({ children, rolagem = true }) {
   return (
     <SafeAreaView style={estilos.tela} edges={['top']}>
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-        {RESPINGOS.map((r, i) => (
-          <View
+        <Image source={TEXTURAS.ruas} style={StyleSheet.absoluteFill} resizeMode="cover" />
+        {FUNDOS[fundo % FUNDOS.length].map(([r, left, top, largura, giro, opacity], i) => (
+          <Image
             key={i}
+            source={TEXTURAS.respingos[r]}
             style={{
               position: 'absolute',
-              top: r.top,
-              left: r.left,
-              width: r.size,
-              height: r.size,
-              borderRadius: r.size / 2,
-              backgroundColor: r.cor,
-              opacity: r.opacity,
+              left,
+              top,
+              width: largura,
+              height: largura * PROPORCAO.respingos[r],
+              opacity,
+              transform: [{ rotate: `${giro}deg` }],
             }}
           />
         ))}
@@ -43,112 +88,138 @@ export function Tela({ children, rolagem = true }) {
   );
 }
 
-// Título em letra de grafite, laranja, inclinado, com escorridos de tinta.
-// A fonte dos títulos já tem escorridos desenhados nas letras, por isso os
-// escorridos extras (traços laranja) ficam desligados por padrão.
+// Respingo de spray avulso (decoração). `tipo` de 0 a 3; a altura segue a proporção.
+export function Respingo({ tipo = 2, largura = 80, estilo }) {
+  return (
+    <Image
+      source={TEXTURAS.respingos[tipo]}
+      pointerEvents="none"
+      style={[
+        { position: 'absolute', width: largura, height: largura * PROPORCAO.respingos[tipo] },
+        estilo,
+      ]}
+    />
+  );
+}
+
+// Bloco de spray "rasgado" na cor pedida, com sombra sólida deslocada (estilo grafite).
+// Usado nos itens selecionados (filtros, tipos, dia de hoje). O conteúdo fica por cima.
+export function BlocoSpray({ cor = cores.laranja, corSombra = '#000000', distancia = 4 }) {
+  return (
+    <>
+      <Image
+        source={TEXTURAS.bloco}
+        resizeMode="stretch"
+        style={[
+          estilos.blocoCamada,
+          {
+            top: distancia,
+            left: distancia,
+            right: -distancia,
+            bottom: -distancia,
+            tintColor: corSombra,
+          },
+        ]}
+      />
+      <Image
+        source={TEXTURAS.bloco}
+        resizeMode="stretch"
+        style={[estilos.blocoCamada, { tintColor: cor }]}
+      />
+    </>
+  );
+}
+
+// Título de grafite: letras brancas com contorno preto, pincelada de spray laranja
+// embaixo e escorridos de tinta saindo das letras, como na proposta aprovada.
+// `gotas`: posição de cada escorrido, em fração da largura do texto (0 = início, 1 = fim).
+// `sublinhado`: [início, largura] da pincelada, também em fração da largura do texto.
 // `tamanho` é o tamanho máximo. Com `ajustar`, o título só diminui (nunca aumenta)
-// para caber em até `linhas` linhas na largura disponível, o que protege telas
-// menores e os elementos que dividem a linha com ele.
+// para caber em até `linhas` linhas na largura disponível.
 export function TituloGrafite({
   children,
   tamanho = 46,
-  escorridos = false,
   linhas,
   ajustar = false,
   escalaMinima = 0.6,
   centralizar = false,
+  gotas = [0.05, 0.5, 0.95],
+  sublinhado = [0.4, 0.66],
   estilo,
 }) {
-  return (
-    <View style={[{ marginBottom: escorridos ? 18 : 6 }, estilo]}>
-      {/* A altura de linha precisa ser maior que o tamanho da fonte: a letra de grafite
-          (Sedgwick Ave Display) é mais alta que o normal e, com a linha justa (1,05),
-          o iOS cortava o topo das letras, como o "O" de "O que tá rolando". */}
-      <Text
-        numberOfLines={linhas}
-        adjustsFontSizeToFit={ajustar}
-        minimumFontScale={ajustar ? escalaMinima : undefined}
-        style={[
-          estilos.tituloGrafite,
-          { fontSize: tamanho, lineHeight: tamanho * 1.3 },
-          centralizar && { textAlign: 'center' },
-        ]}
-      >
-        {children}
-      </Text>
-      {escorridos && (
-        <View pointerEvents="none" style={estilos.escorridos}>
-          <View style={[estilos.gota, { left: 20, height: 16 }]} />
-          <View style={[estilos.gota, { left: 104, height: 24, width: 5 }]} />
-          <View style={[estilos.gota, { left: 210, height: 12, width: 4 }]} />
-        </View>
-      )}
-    </View>
-  );
-}
+  const [largura, setLargura] = useState(0);
+  const propsTexto = {
+    numberOfLines: linhas,
+    adjustsFontSizeToFit: ajustar,
+    minimumFontScale: ajustar ? escalaMinima : undefined,
+  };
+  const estiloTexto = [estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.3 }];
+  const larguraPincel = sublinhado[1] * largura;
 
-// Rótulo pequeno em letra de bloco (ex.: "TREINO · HOJE 19H").
-// Título em dois níveis: uma chamada pequena em cima e a palavra principal grande
-// embaixo (ex.: "Próximos" / "rolês"). As duas linhas giram juntas, alinhadas à
-// esquerda. `tamanho` é o máximo da palavra principal: ela só diminui para caber.
-// `recuo` desloca só a palavra principal para a direita (ex.: '20%' da largura do bloco);
-// a fonte dela se ajusta ao espaço que sobra, então nada é cortado.
-export function TituloChamada({
-  chamada,
-  principal,
-  tamanho = 52,
-  proporcao = 0.42,
-  recuo = 0,
-  estilo,
-}) {
-  const tamanhoChamada = Math.round(tamanho * proporcao);
   return (
-    <View style={[estilos.tituloChamada, estilo]}>
-      {chamada ? (
+    <View style={[{ marginBottom: 6 }, estilo]}>
+      {/* A altura de linha maior que a fonte evita que o iOS corte o topo das letras. */}
+      <View
+        onLayout={(e) => setLargura(e.nativeEvent.layout.width)}
+        style={[estilos.tituloBloco, { alignSelf: centralizar ? 'center' : 'flex-start' }]}
+      >
+        {largura > 0 && (
+          <Image
+            source={TEXTURAS.pincel}
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: sublinhado[0] * largura,
+              top: tamanho * 0.86,
+              width: larguraPincel,
+              height: larguraPincel * PROPORCAO.pincel,
+              transform: [{ rotate: '-1deg' }],
+            }}
+          />
+        )}
+        {/* Contorno: uma cópia preta levemente deslocada atrás do texto. */}
         <Text
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.7}
-          style={[
-            estilos.tituloGrafite,
-            estilos.semGiro,
-            {
-              fontSize: tamanhoChamada,
-              lineHeight: tamanhoChamada * 1.3,
-              textShadowOffset: { width: 2, height: 2 },
-            },
-          ]}
+          {...propsTexto}
+          style={[estiloTexto, estilos.tituloContorno]}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
         >
-          {chamada}
+          {children}
         </Text>
-      ) : null}
-      <View style={{ paddingLeft: recuo }}>
-        <Text
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.6}
-          style={[
-            estilos.tituloGrafite,
-            estilos.semGiro,
-            {
-              fontSize: tamanho,
-              lineHeight: tamanho * 1.3,
-              marginTop: chamada ? -tamanho * 0.12 : 0,
-            },
-          ]}
-        >
-          {principal}
+        <Text {...propsTexto} style={estiloTexto}>
+          {children}
         </Text>
+        {largura > 0 &&
+          gotas.map((fracao, i) => {
+            const gota = GOTAS[i % GOTAS.length];
+            const w = Math.round(tamanho * (i % 2 ? 0.3 : 0.22));
+            return (
+              <Image
+                key={i}
+                source={gota.fonte}
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: fracao * largura - w / 2,
+                  top: tamanho * 0.88,
+                  width: w,
+                  height: w * gota.proporcao,
+                }}
+              />
+            );
+          })}
       </View>
     </View>
   );
 }
 
+// Rótulo pequeno em letra de bloco (ex.: "TREINO · HOJE 19H").
 export function Rotulo({ children, cor = cores.laranja, estilo }) {
   return <Text style={[estilos.rotulo, { color: cor }, estilo]}>{children}</Text>;
 }
 
-// Botão estilo adesivo. Variantes: laranja (ação), verde (confirmar presença), contorno.
+// Botão estilo adesivo. Variantes: laranja (ação), verde (confirmar presença), contorno
+// e spray (preto com contorno e texto laranja, seta e borrifo de spray atrás).
 export function BotaoAdesivo({
   titulo,
   aoTocar,
@@ -158,6 +229,37 @@ export function BotaoAdesivo({
   largo = false,
   rotuloAcessivel,
 }) {
+  if (variante === 'spray') {
+    return (
+      <View style={{ alignSelf: largo ? 'stretch' : 'flex-start' }}>
+        <Image
+          source={TEXTURAS.faixa}
+          pointerEvents="none"
+          style={[estilos.faixaBotao, { height: 230 * PROPORCAO.faixa }]}
+        />
+        <Pressable
+          onPress={aoTocar}
+          disabled={desativado}
+          accessibilityRole="button"
+          accessibilityLabel={rotuloAcessivel || titulo}
+          accessibilityState={{ disabled: desativado }}
+          style={({ pressed }) => [
+            estilos.botao,
+            estilos.botaoSpray,
+            {
+              transform: [{ rotate: `${inclinacao}deg` }, { scale: pressed ? 0.97 : 1 }],
+              opacity: desativado ? 0.45 : 1,
+            },
+            sombraAdesivo('#000000', 4),
+          ]}
+        >
+          <Text style={[estilos.botaoTexto, estilos.botaoSprayTexto]}>{titulo}</Text>
+          <Ionicons name="chevron-forward" size={20} color={cores.laranja} />
+        </Pressable>
+      </View>
+    );
+  }
+
   const fundo =
     variante === 'laranja' ? cores.laranja : variante === 'verde' ? cores.verde : 'transparent';
   const corTexto = variante === 'contorno' ? cores.texto : cores.fundo;
@@ -188,6 +290,9 @@ export function BotaoAdesivo({
 }
 
 // Etiqueta selecionável (filtros, tipo de publicação, papéis na cena).
+// Selecionada: bloco de spray rasgado na cor da categoria, com sombra grafite preta.
+// Não selecionada: fundo preto, contorno branco e sombra preta.
+// `alta`: versão maior, usada nas abas Perto de mim / Cena Brasil.
 export function Etiqueta({
   titulo,
   ativa,
@@ -195,6 +300,7 @@ export function Etiqueta({
   inclinacao = 0,
   corAtiva = cores.laranja,
   corTextoAtiva = cores.fundo,
+  alta = false,
 }) {
   return (
     <Pressable
@@ -203,13 +309,19 @@ export function Etiqueta({
       accessibilityState={{ selected: !!ativa }}
       style={[
         estilos.etiqueta,
-        ativa
-          ? [{ backgroundColor: corAtiva, borderColor: corAtiva }, sombraAdesivo(cores.texto, 2)]
-          : { backgroundColor: cores.fundo, borderColor: cores.texto },
+        alta && estilos.etiquetaAlta,
+        ativa ? estilos.etiquetaAtiva : [estilos.etiquetaInativa, sombraAdesivo('#000000', 3)],
         { transform: [{ rotate: `${inclinacao}deg` }] },
       ]}
     >
-      <Text style={[estilos.etiquetaTexto, { color: ativa ? corTextoAtiva : cores.texto }]}>
+      {ativa ? <BlocoSpray cor={corAtiva} /> : null}
+      <Text
+        style={[
+          estilos.etiquetaTexto,
+          alta && { fontSize: 17 },
+          { color: ativa ? corTextoAtiva : cores.texto },
+        ]}
+      >
         {titulo}
       </Text>
     </Pressable>
@@ -217,9 +329,28 @@ export function Etiqueta({
 }
 
 // Cartão de papel colado com fita (estilo lambe-lambe).
+// Textura de linhas leves, respingo laranja no canto e dois escorridos na borda de baixo.
 export function CartaoPapel({ children, inclinacao = -1 }) {
   return (
     <View style={[estilos.papel, { transform: [{ rotate: `${inclinacao}deg` }] }]}>
+      <Image
+        source={TEXTURAS.papelLinhas}
+        resizeMode="repeat"
+        pointerEvents="none"
+        style={StyleSheet.absoluteFill}
+      />
+      <Image
+        source={TEXTURAS.respingos[2]}
+        pointerEvents="none"
+        style={[estilos.papelRespingo, { height: 104 * PROPORCAO.respingos[2] }]}
+      />
+      <View pointerEvents="none" style={estilos.papelGotas}>
+        <Image source={GOTAS[5].fonte} style={{ width: 18, height: 18 * GOTAS[5].proporcao }} />
+        <Image
+          source={GOTAS[1].fonte}
+          style={{ width: 12, height: 12 * GOTAS[1].proporcao, marginLeft: 2 }}
+        />
+      </View>
       <View style={estilos.fita} />
       {children}
     </View>
@@ -233,8 +364,8 @@ export function EstadoVazio({ titulo, texto, acao, aoTocarAcao }) {
       <Text style={estilos.vazioTitulo}>{titulo}</Text>
       {texto ? <Text style={estilos.vazioTexto}>{texto}</Text> : null}
       {acao ? (
-        <View style={{ marginTop: 14 }}>
-          <BotaoAdesivo titulo={acao} aoTocar={aoTocarAcao} inclinacao={-2} />
+        <View style={{ marginTop: 18 }}>
+          <BotaoAdesivo titulo={acao} aoTocar={aoTocarAcao} inclinacao={-2} variante="spray" />
         </View>
       ) : null}
     </CartaoPapel>
@@ -244,7 +375,7 @@ export function EstadoVazio({ titulo, texto, acao, aoTocarAcao }) {
 const estilos = StyleSheet.create({
   tela: {
     flex: 1,
-    backgroundColor: cores.fundo,
+    backgroundColor: '#0B0B0C',
   },
   conteudo: {
     paddingHorizontal: 18,
@@ -252,34 +383,34 @@ const estilos = StyleSheet.create({
     paddingBottom: 40,
     gap: 18,
   },
-  tituloChamada: {
+  tituloBloco: {
+    maxWidth: '100%',
     transform: [{ rotate: '-3deg' }],
-  },
-  semGiro: {
-    transform: [],
   },
   tituloGrafite: {
     fontFamily: fontes.titulo,
-    color: cores.laranja,
-    transform: [{ rotate: '-3deg' }],
+    color: cores.texto,
     textShadowColor: '#000000',
     textShadowOffset: { width: 3, height: 3 },
     textShadowRadius: 0,
   },
-  escorridos: {
+  // Mesma largura do texto principal (left/right), para o ajuste de tamanho ser igual.
+  tituloContorno: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: -14,
-    height: 26,
+    top: -1,
+    left: -1,
+    right: 1,
+    color: '#000000',
+    textShadowOffset: { width: 0, height: 0 },
   },
-  gota: {
+  blocoCamada: {
     position: 'absolute',
     top: 0,
-    width: 6,
-    backgroundColor: cores.laranja,
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: undefined,
+    height: undefined,
   },
   rotulo: {
     fontFamily: fontes.bloco,
@@ -299,12 +430,42 @@ const estilos = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
+  botaoSpray: {
+    flexDirection: 'row',
+    gap: 10,
+    minHeight: 50,
+    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: cores.laranja,
+    backgroundColor: '#0B0B0C',
+  },
+  botaoSprayTexto: {
+    fontSize: 19,
+    color: cores.laranja,
+  },
+  faixaBotao: {
+    position: 'absolute',
+    left: -16,
+    top: -14,
+    width: 230,
+    opacity: 0.85,
+  },
   etiqueta: {
-    minHeight: 40,
-    paddingHorizontal: 14,
+    minHeight: 42,
+    paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  etiquetaAlta: {
+    minHeight: 50,
+  },
+  etiquetaAtiva: {
+    backgroundColor: 'transparent',
+  },
+  etiquetaInativa: {
+    backgroundColor: '#0B0B0C',
     borderWidth: 2,
+    borderColor: cores.texto,
   },
   etiquetaTexto: {
     fontFamily: fontes.bloco,
@@ -313,14 +474,28 @@ const estilos = StyleSheet.create({
     textTransform: 'uppercase',
   },
   papel: {
-    backgroundColor: cores.papel,
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 16,
+    backgroundColor: '#EDEBE6',
+    paddingHorizontal: 18,
+    paddingTop: 24,
+    paddingBottom: 20,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.55,
     shadowRadius: 0,
+  },
+  papelRespingo: {
+    position: 'absolute',
+    left: -30,
+    top: -26,
+    width: 104,
+    opacity: 0.95,
+  },
+  papelGotas: {
+    position: 'absolute',
+    right: 22,
+    bottom: -34,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
   fita: {
     position: 'absolute',
@@ -329,13 +504,13 @@ const estilos = StyleSheet.create({
     marginLeft: -39,
     width: 78,
     height: 20,
-    backgroundColor: 'rgba(200,200,190,0.8)',
+    backgroundColor: 'rgba(200,200,190,0.85)',
     transform: [{ rotate: '3deg' }],
   },
   vazioTitulo: {
     fontFamily: fontes.bloco,
-    fontSize: 22,
-    lineHeight: 26,
+    fontSize: 23,
+    lineHeight: 27,
     color: cores.textoPapel,
     textTransform: 'uppercase',
   },
@@ -343,7 +518,7 @@ const estilos = StyleSheet.create({
     fontFamily: fontes.texto,
     fontSize: 15,
     lineHeight: 21,
-    color: '#333333',
-    marginTop: 6,
+    color: '#2B2B2B',
+    marginTop: 8,
   },
 });

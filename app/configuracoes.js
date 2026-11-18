@@ -67,7 +67,9 @@ export default function Configuracoes() {
         </Pressable>
       </View>
 
-      <TituloGrafite tamanho={42}>Configurações</TituloGrafite>
+      <TituloGrafite tamanho={42} gotas={[0.034, 0.488, 0.957]}>
+        Configurações
+      </TituloGrafite>
 
       <View style={{ gap: 12 }}>
         {SECOES.map((secao) => (

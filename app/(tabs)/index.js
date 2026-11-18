@@ -15,7 +15,7 @@ export default function Inicio() {
   const { naoLidas } = useNotificacoes();
 
   return (
-    <Tela>
+    <Tela fundo={0}>
       {/* Topo: logo oficial centralizada e sininho à direita */}
       <View style={estilos.topo}>
         <View style={estilos.lateral} />
@@ -29,7 +29,7 @@ export default function Inicio() {
           onPress={() => router.push('/notificacoes')}
           accessibilityRole="button"
           accessibilityLabel={naoLidas > 0 ? `Notificações, ${naoLidas} não lidas` : 'Notificações'}
-          style={[estilos.sino, sombraAdesivo(cores.laranja)]}
+          style={[estilos.sino, sombraAdesivo(cores.laranja, 4)]}
         >
           <Ionicons
             name="notifications-outline"
@@ -40,29 +40,39 @@ export default function Inicio() {
       </View>
 
       <View>
-        <TituloGrafite escorridos={false} centralizar>
+        <TituloGrafite
+          centralizar
+          gotas={[0.031, 0.281, 0.464, 0.904, 0.969]}
+          sublinhado={[0.34, 0.7]}
+        >
           O que tá rolando
         </TituloGrafite>
         <Text style={estilos.regiao}>Sua região: ainda não definida</Text>
       </View>
 
       <View style={estilos.abas} accessibilityRole="tablist">
-        <Etiqueta
-          titulo="Perto de mim"
-          ativa={aba === 'perto'}
-          aoTocar={() => setAba('perto')}
-          inclinacao={-2}
-          corAtiva={coresAbasInicio.perto.fundo}
-          corTextoAtiva={coresAbasInicio.perto.texto}
-        />
-        <Etiqueta
-          titulo="Cena Brasil"
-          ativa={aba === 'brasil'}
-          aoTocar={() => setAba('brasil')}
-          inclinacao={1.5}
-          corAtiva={coresAbasInicio.brasil.fundo}
-          corTextoAtiva={coresAbasInicio.brasil.texto}
-        />
+        <View style={{ flex: 1 }}>
+          <Etiqueta
+            titulo="Perto de mim"
+            ativa={aba === 'perto'}
+            aoTocar={() => setAba('perto')}
+            inclinacao={-2}
+            corAtiva={coresAbasInicio.perto.fundo}
+            corTextoAtiva={coresAbasInicio.perto.texto}
+            alta
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Etiqueta
+            titulo="Cena Brasil"
+            ativa={aba === 'brasil'}
+            aoTocar={() => setAba('brasil')}
+            inclinacao={1.5}
+            corAtiva={coresAbasInicio.brasil.fundo}
+            corTextoAtiva={coresAbasInicio.brasil.texto}
+            alta
+          />
+        </View>
       </View>
 
       {aba === 'perto' ? (
@@ -89,14 +99,14 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 112,
+    height: 126,
   },
   lateral: {
     width: 46,
   },
   logo: {
-    height: 104,
-    width: 172,
+    height: 126,
+    width: 210,
     transform: [{ rotate: '-2deg' }],
   },
   sino: {
@@ -111,12 +121,14 @@ const estilos = StyleSheet.create({
   },
   regiao: {
     fontFamily: fontes.marcador,
-    fontSize: 15,
+    fontSize: 14,
+    letterSpacing: 0.5,
     color: cores.textoSuave,
+    textTransform: 'uppercase',
     marginTop: 4,
   },
   abas: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 14,
   },
 });

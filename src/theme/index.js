@@ -52,8 +52,9 @@ export const coresCategoria = {
   todas: cores.laranja,
 };
 
-// Padrão aprovado dos dois cards de seleção da tela Início.
+// Padrão aprovado dos dois cards de seleção da tela Início. Perto de mim usa o
+// laranja oficial, como na proposta visual aprovada.
 export const coresAbasInicio = {
-  perto: { fundo: '#F28C28', texto: cores.fundo },
+  perto: { fundo: cores.laranja, texto: cores.fundo },
   brasil: { fundo: '#299D58', texto: '#FFDF00' },
 };

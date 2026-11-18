@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { BotaoAdesivo, Etiqueta, Rotulo } from './Rua';
-import { cores, fontes } from '../theme';
+import { cores, fontes, sombraAdesivo } from '../theme';
 import { DIAS_SEMANA, mascararData, mascararHora } from '../programacao';
 
 const INCLINACOES = [-2, 1.5, -1, 1, -1.5, 2, -1];
@@ -212,6 +212,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: 12,
     fontFamily: fontes.marcador,
     fontSize: 16,
+    ...sombraAdesivo('#000000', 3),
   },
   linha: {
     flexDirection: 'row',

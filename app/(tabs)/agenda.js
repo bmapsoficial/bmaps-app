@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { EstadoVazio, Etiqueta, Tela, TituloChamada } from '../../src/components/Rua';
+import { BlocoSpray, EstadoVazio, Etiqueta, Tela, TituloGrafite } from '../../src/components/Rua';
 import { cores, fontes, sombraAdesivo } from '../../src/theme';
 
 const DIAS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
@@ -41,11 +41,20 @@ export default function Agenda() {
   const diaAtual = dias.find((d) => d.chave === selecionado) || dias[0];
 
   return (
-    <Tela>
+    <Tela fundo={0}>
       <View style={estilos.topo}>
-        {/* "Rolês" como protagonista. O bloco usa só
-            o espaço ao lado dos filtros; "rolês" diminui apenas se não couber. */}
-        <TituloChamada principal="rolês" tamanho={52} recuo="20%" estilo={estilos.titulo} />
+        {/* "Rolês" ocupa o espaço ao lado dos filtros, com recuo de 20%; só diminui se
+            não couber (iPhones menores). */}
+        <TituloGrafite
+          tamanho={52}
+          linhas={1}
+          ajustar
+          gotas={[0.122, 0.491, 0.897]}
+          sublinhado={[0.075, 0.96]}
+          estilo={estilos.titulo}
+        >
+          rolês
+        </TituloGrafite>
         <View style={estilos.filtros}>
           <Etiqueta
             titulo="Tudo"
@@ -78,17 +87,17 @@ export default function Agenda() {
               style={[
                 estilos.dia,
                 ativo
-                  ? [
-                      {
-                        backgroundColor: cores.laranja,
-                        borderColor: cores.laranja,
-                        transform: [{ rotate: '-3deg' }],
-                      },
-                      sombraAdesivo(cores.texto, 2),
-                    ]
-                  : { borderColor: cores.texto },
+                  ? {
+                      borderWidth: 0,
+                      backgroundColor: 'transparent',
+                      transform: [{ rotate: '-3deg' }],
+                    }
+                  : [{ borderColor: cores.texto }, sombraAdesivo('#000000', 2)],
               ]}
             >
+              {ativo ? (
+                <BlocoSpray cor={cores.laranja} corSombra={cores.texto} distancia={3} />
+              ) : null}
               <Text style={[estilos.diaSemana, { color: ativo ? cores.fundo : cores.textoSuave }]}>
                 {d.semana}
               </Text>
@@ -125,7 +134,9 @@ const estilos = StyleSheet.create({
   titulo: {
     flex: 1,
     minWidth: 0,
+    paddingLeft: '20%',
     paddingRight: 4,
+    marginBottom: 0,
   },
   // Os filtros mantêm tamanho e área de toque; quem cede espaço é o título.
   filtros: {
@@ -135,7 +146,8 @@ const estilos = StyleSheet.create({
   },
   mes: {
     fontFamily: fontes.marcador,
-    fontSize: 16,
+    fontSize: 15,
+    textTransform: 'uppercase',
     color: cores.textoSuave,
     marginTop: -6,
   },
@@ -145,8 +157,9 @@ const estilos = StyleSheet.create({
   },
   dia: {
     flex: 1,
-    height: 60,
+    height: 62,
     borderWidth: 2,
+    backgroundColor: '#0B0B0C',
     alignItems: 'center',
     justifyContent: 'center',
   },

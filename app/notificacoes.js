@@ -31,7 +31,9 @@ export default function Notificacoes() {
         </Pressable>
       </View>
 
-      <TituloGrafite tamanho={42}>Notificações</TituloGrafite>
+      <TituloGrafite tamanho={42} gotas={[0.047, 0.47, 0.951]}>
+        Notificações
+      </TituloGrafite>
 
       {lista.length === 0 ? (
         <EstadoVazio

@@ -49,8 +49,8 @@ export default function BarraNavegacao({ state, emitter, navigateToTab }) {
               accessibilityLabel="Publicar"
               style={estilos.item}
             >
-              <View style={[estilos.botaoMais, sombraAdesivo(cores.texto)]}>
-                <Ionicons name="add" size={32} color={cores.fundo} />
+              <View style={[estilos.botaoMais, sombraAdesivo(cores.texto, 4)]}>
+                <Ionicons name="add" size={34} color={cores.fundo} />
               </View>
             </Pressable>
           );
@@ -66,7 +66,7 @@ export default function BarraNavegacao({ state, emitter, navigateToTab }) {
             accessibilityLabel={item.rotulo}
             style={estilos.item}
           >
-            <Ionicons name={ativo ? item.iconeAtivo : item.icone} size={23} color={cor} />
+            <Ionicons name={ativo ? item.iconeAtivo : item.icone} size={25} color={cor} />
             <Text style={[estilos.rotulo, { color: cor }]} numberOfLines={1}>
               {item.rotulo.toUpperCase()}
             </Text>
@@ -102,7 +102,7 @@ const estilos = StyleSheet.create({
   rotulo: {
     alignSelf: 'stretch',
     fontFamily: fontes.bloco,
-    fontSize: 12,
+    fontSize: 13,
     letterSpacing: 1,
     paddingHorizontal: 2,
     textAlign: 'center',

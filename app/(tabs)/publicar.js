@@ -2,7 +2,14 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { BotaoAdesivo, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
+import {
+  BotaoAdesivo,
+  Etiqueta,
+  Respingo,
+  Rotulo,
+  Tela,
+  TituloGrafite,
+} from '../../src/components/Rua';
 import {
   ListaDeDias,
   OpcoesUnicas,
@@ -271,17 +278,23 @@ export default function Publicar() {
   };
 
   return (
-    <Tela>
+    <Tela fundo={2}>
       {/* Título e botão de informações na mesma linha, centralizados na vertical. */}
       <View style={estilos.topo}>
-        <TituloGrafite tamanho={42} linhas={1} ajustar estilo={estilos.titulo}>
+        <TituloGrafite
+          tamanho={42}
+          linhas={1}
+          ajustar
+          gotas={[0.033, 0.583, 0.967]}
+          estilo={estilos.titulo}
+        >
           Avisar a cena
         </TituloGrafite>
         <Pressable
           onPress={() => setInfoVisivel(true)}
           accessibilityRole="button"
           accessibilityLabel="Qual publicação fazer?"
-          style={[estilos.botaoInfo, sombraAdesivo(cores.laranja)]}
+          style={[estilos.botaoInfo, sombraAdesivo(cores.laranja, 4)]}
         >
           <Ionicons name="information-circle-outline" size={22} color={cores.laranja} />
         </Pressable>
@@ -305,22 +318,25 @@ export default function Publicar() {
         <Text style={estilos.descricao}>{DESCRICOES[tipo]}</Text>
       </View>
 
-      <Pressable
-        onPress={() =>
-          Alert.alert('Em breve', 'A leitura automática do flyer entra numa próxima etapa.')
-        }
-        accessibilityRole="button"
-        accessibilityLabel="Subir o flyer (em breve)"
-        style={estilos.flyer}
-      >
-        <View style={estilos.flyerIcone}>
-          <Ionicons name="image-outline" size={24} color={cores.fundo} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={estilos.flyerTitulo}>Subir o flyer</Text>
-          <Text style={estilos.flyerTexto}>em breve: o app lê e preenche pra você</Text>
-        </View>
-      </Pressable>
+      <View>
+        <Respingo tipo={2} largura={80} estilo={estilos.flyerRespingo} />
+        <Pressable
+          onPress={() =>
+            Alert.alert('Em breve', 'A leitura automática do flyer entra numa próxima etapa.')
+          }
+          accessibilityRole="button"
+          accessibilityLabel="Subir o flyer (em breve)"
+          style={estilos.flyer}
+        >
+          <View style={[estilos.flyerIcone, sombraAdesivo(cores.texto, 3)]}>
+            <Ionicons name="image-outline" size={24} color={cores.fundo} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={estilos.flyerTitulo}>Subir o flyer</Text>
+            <Text style={estilos.flyerTexto}>em breve: o app lê e preenche pra você</Text>
+          </View>
+        </Pressable>
+      </View>
 
       <View style={{ gap: 12 }}>
         {TIPOS[tipo].map((campo) =>
@@ -359,10 +375,12 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
+  // Recuo do título aprovado na proposta visual.
   titulo: {
     flex: 1,
     minWidth: 0,
     marginBottom: 0,
+    marginLeft: 12,
   },
   // Mesmo desenho dos botões de notificações (Início) e configurações (Perfil).
   botaoInfo: {
@@ -393,6 +411,13 @@ const estilos = StyleSheet.create({
     borderWidth: 3,
     borderStyle: 'dashed',
     borderColor: cores.laranja,
+    backgroundColor: 'rgba(11,11,12,0.9)',
+  },
+  flyerRespingo: {
+    right: -26,
+    top: -22,
+    opacity: 0.8,
+    transform: [{ rotate: '60deg' }],
   },
   flyerIcone: {
     width: 46,
@@ -423,6 +448,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: 12,
     fontFamily: fontes.marcador,
     fontSize: 16,
+    ...sombraAdesivo('#000000', 3),
   },
   nota: {
     fontFamily: fontes.texto,

@@ -30,7 +30,8 @@ export default function Mapa() {
 
   return (
     <Tela>
-      <TituloGrafite tamanho={44} escorridos={false}>
+      {/* Até duas linhas; em telas estreitas o título diminui em vez de cortar. */}
+      <TituloGrafite tamanho={44} escorridos={false} linhas={2} ajustar>
         Onde a cena acontece
       </TituloGrafite>
 

@@ -43,8 +43,10 @@ export default function Agenda() {
   return (
     <Tela>
       <View style={estilos.topo}>
-        <TituloGrafite tamanho={46} escorridos={false}>
-          Agenda
+        {/* O título ocupa só o espaço que sobra ao lado dos filtros: quebra em duas
+            linhas e, se ainda não couber (iPhones menores), diminui. Nunca aumenta. */}
+        <TituloGrafite tamanho={40} escorridos={false} linhas={2} ajustar estilo={estilos.titulo}>
+          Próximos rolês
         </TituloGrafite>
         <View style={estilos.filtros}>
           <Etiqueta
@@ -120,11 +122,17 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexWrap: 'wrap',
     gap: 10,
   },
+  titulo: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 4,
+  },
+  // Os filtros mantêm tamanho e área de toque; quem cede espaço é o título.
   filtros: {
     flexDirection: 'row',
+    flexShrink: 0,
     gap: 8,
   },
   mes: {

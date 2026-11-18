@@ -46,13 +46,29 @@ export function Tela({ children, rolagem = true }) {
 // Título em letra de grafite, laranja, inclinado, com escorridos de tinta.
 // A fonte dos títulos já tem escorridos desenhados nas letras, por isso os
 // escorridos extras (traços laranja) ficam desligados por padrão.
-export function TituloGrafite({ children, tamanho = 46, escorridos = false }) {
+// `tamanho` é o tamanho máximo. Com `ajustar`, o título só diminui (nunca aumenta)
+// para caber em até `linhas` linhas na largura disponível, o que protege telas
+// menores e os elementos que dividem a linha com ele.
+export function TituloGrafite({
+  children,
+  tamanho = 46,
+  escorridos = false,
+  linhas,
+  ajustar = false,
+  escalaMinima = 0.6,
+  estilo,
+}) {
   return (
-    <View style={{ marginBottom: escorridos ? 18 : 6 }}>
+    <View style={[{ marginBottom: escorridos ? 18 : 6 }, estilo]}>
       {/* A altura de linha precisa ser maior que o tamanho da fonte: a letra de grafite
           (Sedgwick Ave Display) é mais alta que o normal e, com a linha justa (1,05),
           o iOS cortava o topo das letras, como o "O" de "O que tá rolando". */}
-      <Text style={[estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.3 }]}>
+      <Text
+        numberOfLines={linhas}
+        adjustsFontSizeToFit={ajustar}
+        minimumFontScale={ajustar ? escalaMinima : undefined}
+        style={[estilos.tituloGrafite, { fontSize: tamanho, lineHeight: tamanho * 1.3 }]}
+      >
         {children}
       </Text>
       {escorridos && (

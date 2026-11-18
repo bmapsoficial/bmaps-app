@@ -3,20 +3,30 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons';
 
 import { BotaoAdesivo, Etiqueta, Rotulo, Tela, TituloGrafite } from '../../src/components/Rua';
+import { ListaDeDias, OpcoesUnicas, ProgramacaoSemanal } from '../../src/components/Programacao';
 import { cores, coresCategoria, fontes } from '../../src/theme';
+import {
+  CONDICOES_AULA,
+  FORMATOS_AULA,
+  FREQUENCIAS_AULA,
+  VERSAO_PUBLICACAO,
+  descreverProgramacao,
+  montarDias,
+  montarSemanal,
+} from '../../src/programacao';
 
 // Campos de cada tipo, seguindo o documento de conceito.
 const TIPOS = {
   Evento: [
     { chave: 'nome', rotulo: 'Nome do evento', dica: 'Ex.: nome da batalha ou jam' },
-    { chave: 'quando', rotulo: 'Data e hora', dica: 'Ex.: sáb 22/11 · 14h' },
+    { chave: 'programacao', especial: true },
     { chave: 'local', rotulo: 'Local', dica: 'Endereço ou nome do lugar' },
     { chave: 'formato', rotulo: 'Formato', dica: 'Ex.: 1x1, 2x2, crew vs crew' },
     { chave: 'entrada', rotulo: 'Entrada', dica: 'Gratuita ou valor' },
   ],
   Treino: [
     { chave: 'local', rotulo: 'Local', dica: 'Endereço ou nome do lugar' },
-    { chave: 'quando', rotulo: 'Dia e horário', dica: 'Ex.: toda terça e quinta · 19h' },
+    { chave: 'programacao', especial: true },
     { chave: 'nivel', rotulo: 'Pra quem é', dica: 'Ex.: iniciantes, todos os níveis' },
     { chave: 'como', rotulo: 'Como vai ser', dica: 'Ex.: bate-papo, workshop, treino livre' },
   ],
@@ -28,7 +38,9 @@ const TIPOS = {
   Aula: [
     { chave: 'local', rotulo: 'Local', dica: 'Endereço ou nome do lugar' },
     { chave: 'professor', rotulo: 'Professor(a)', dica: 'Nome artístico' },
-    { chave: 'quando', rotulo: 'Dia e horário', dica: 'Ex.: sábado · 10h' },
+    { chave: 'formatoAula', especial: true },
+    { chave: 'condicao', especial: true },
+    { chave: 'programacao', especial: true },
     { chave: 'nivel', rotulo: 'Nível', dica: 'Ex.: iniciante' },
   ],
 };
@@ -41,18 +53,181 @@ const COR_TIPO = {
   Aula: coresCategoria.aula,
 };
 const INCLINACOES = [-3, 1, -1, 2];
+// Chave da categoria usada nos dados salvos.
+const CHAVE_TIPO = { Evento: 'evento', Treino: 'treino', Pico: 'pico', Aula: 'aula' };
+
+let contadorDias = 0;
+const novoDia = () => ({ id: `dia-${contadorDias++}`, data: '', inicio: '', fim: '' });
+const novaSemanal = () => ({ diasSemana: [], inicio: '', fim: '', dataInicio: '', dataFim: '' });
 
 export default function Publicar() {
   const [tipo, setTipo] = useState('Evento');
   const [valores, setValores] = useState({});
+  // Programação de cada categoria, guardada separadamente para não se perder ao trocar de tipo.
+  const [diasEvento, setDiasEvento] = useState(() => [novoDia()]);
+  const [semanalTreino, setSemanalTreino] = useState(novaSemanal);
+  const [aula, setAula] = useState(() => ({
+    formato: null,
+    condicao: null,
+    frequencia: null,
+    dias: [novoDia()],
+    semanal: novaSemanal(),
+  }));
 
   const atualizar = (chave, texto) => setValores((v) => ({ ...v, [chave]: texto }));
+  const mudarAula = (campo, valor) => setAula((a) => ({ ...a, [campo]: valor }));
 
-  const avisoVersaoTeste = () =>
+  // Monta a publicação no formato que será salvo. Ainda não é enviada a lugar nenhum.
+  const montarPublicacao = () => {
+    const campos = {};
+    TIPOS[tipo]
+      .filter((c) => !c.especial)
+      .forEach((c) => {
+        campos[c.chave] = (valores[`${tipo}-${c.chave}`] || '').trim();
+      });
+    const publicacao = { versao: VERSAO_PUBLICACAO, tipo: CHAVE_TIPO[tipo], ...campos };
+
+    if (tipo === 'Evento') {
+      const r = montarDias(diasEvento);
+      return r.erros.length
+        ? { erros: r.erros }
+        : { publicacao: { ...publicacao, programacao: r.programacao } };
+    }
+    if (tipo === 'Treino') {
+      const r = montarSemanal(semanalTreino);
+      return r.erros.length
+        ? { erros: r.erros }
+        : { publicacao: { ...publicacao, programacao: r.programacao } };
+    }
+    if (tipo === 'Aula') {
+      const erros = [];
+      if (!aula.formato) erros.push('Escolha o formato da aula.');
+      if (!aula.condicao) erros.push('Escolha a condição de participação.');
+      let r = { erros: [] };
+      if (aula.formato === 'curso') {
+        r = montarSemanal(aula.semanal, { tipo: 'periodo', exigirFim: true });
+      } else if (aula.formato) {
+        if (aula.frequencia === 'avulsa') r = montarDias(aula.dias);
+        else if (aula.frequencia === 'regular') r = montarSemanal(aula.semanal);
+        else erros.push('Escolha se é aula avulsa ou aulas regulares.');
+      }
+      erros.push(...r.erros);
+      if (erros.length) return { erros };
+      return {
+        publicacao: {
+          ...publicacao,
+          formatoAula: aula.formato,
+          condicao: aula.condicao,
+          programacao: r.programacao,
+        },
+      };
+    }
+    return { publicacao };
+  };
+
+  const aoPublicar = () => {
+    const { erros, publicacao } = montarPublicacao();
+    if (erros) {
+      Alert.alert('Falta ajustar', erros.join('\n'));
+      return;
+    }
+    const linhas = descreverProgramacao(publicacao);
+    if (publicacao.tipo === 'aula') {
+      const formato = FORMATOS_AULA.find((f) => f.chave === publicacao.formatoAula).nome;
+      const condicao = CONDICOES_AULA.find((c) => c.chave === publicacao.condicao).nome;
+      linhas.unshift(`${formato} · ${condicao}`);
+    }
     Alert.alert(
       'Versão de teste',
-      'Nesta etapa nada é publicado ainda. O envio de verdade entra quando o servidor do B-Maps for ligado.',
+      'Nada foi publicado nem salvo: o envio de verdade entra quando o servidor do B-Maps for ligado.' +
+        (linhas.length ? `\n\nAssim a programação vai aparecer:\n${linhas.join('\n')}` : ''),
     );
+  };
+
+  const corTipo = COR_TIPO[tipo];
+
+  // Campos especiais de programação, conforme a categoria.
+  const renderizarEspecial = (chave) => {
+    if (chave === 'programacao' && tipo === 'Evento') {
+      return (
+        <View style={{ gap: 10 }}>
+          <Rotulo cor={cores.textoSuave}>Datas e horários</Rotulo>
+          <ListaDeDias dias={diasEvento} aoMudar={setDiasEvento} />
+        </View>
+      );
+    }
+    if (chave === 'programacao' && tipo === 'Treino') {
+      return <ProgramacaoSemanal valor={semanalTreino} aoMudar={setSemanalTreino} cor={corTipo} />;
+    }
+    if (chave === 'formatoAula') {
+      return (
+        <OpcoesUnicas
+          rotulo="Formato da aula"
+          opcoes={FORMATOS_AULA}
+          valor={aula.formato}
+          aoEscolher={(v) => mudarAula('formato', v)}
+          cor={corTipo}
+        />
+      );
+    }
+    if (chave === 'condicao') {
+      return (
+        <OpcoesUnicas
+          rotulo="Participação"
+          opcoes={CONDICOES_AULA}
+          valor={aula.condicao}
+          aoEscolher={(v) => mudarAula('condicao', v)}
+          cor={corTipo}
+        />
+      );
+    }
+    if (chave === 'programacao' && tipo === 'Aula') {
+      if (!aula.formato) {
+        return (
+          <Text style={estilos.nota}>Escolha o formato da aula para informar a programação.</Text>
+        );
+      }
+      if (aula.formato === 'curso') {
+        return (
+          <View style={{ gap: 10 }}>
+            <Rotulo cor={cores.textoSuave}>Período e horários</Rotulo>
+            <ProgramacaoSemanal
+              valor={aula.semanal}
+              aoMudar={(v) => mudarAula('semanal', v)}
+              cor={corTipo}
+              fimObrigatorio
+            />
+          </View>
+        );
+      }
+      return (
+        <View style={{ gap: 12 }}>
+          <OpcoesUnicas
+            rotulo="Programação"
+            opcoes={FREQUENCIAS_AULA}
+            valor={aula.frequencia}
+            aoEscolher={(v) => mudarAula('frequencia', v)}
+            cor={corTipo}
+          />
+          {aula.frequencia === 'avulsa' && (
+            <ListaDeDias
+              dias={aula.dias}
+              aoMudar={(v) => mudarAula('dias', v)}
+              permitirVarios={false}
+            />
+          )}
+          {aula.frequencia === 'regular' && (
+            <ProgramacaoSemanal
+              valor={aula.semanal}
+              aoMudar={(v) => mudarAula('semanal', v)}
+              cor={corTipo}
+            />
+          )}
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
     <Tela>
@@ -93,24 +268,28 @@ export default function Publicar() {
       </Pressable>
 
       <View style={{ gap: 12 }}>
-        {TIPOS[tipo].map((campo) => (
-          <View key={`${tipo}-${campo.chave}`} style={{ gap: 6 }}>
-            <Rotulo cor={cores.textoSuave}>{campo.rotulo}</Rotulo>
-            <TextInput
-              value={valores[`${tipo}-${campo.chave}`] || ''}
-              onChangeText={(t) => atualizar(`${tipo}-${campo.chave}`, t)}
-              placeholder={campo.dica}
-              placeholderTextColor={cores.cinza}
-              accessibilityLabel={campo.rotulo}
-              style={estilos.campo}
-            />
-          </View>
-        ))}
+        {TIPOS[tipo].map((campo) =>
+          campo.especial ? (
+            <View key={`${tipo}-${campo.chave}`}>{renderizarEspecial(campo.chave)}</View>
+          ) : (
+            <View key={`${tipo}-${campo.chave}`} style={{ gap: 6 }}>
+              <Rotulo cor={cores.textoSuave}>{campo.rotulo}</Rotulo>
+              <TextInput
+                value={valores[`${tipo}-${campo.chave}`] || ''}
+                onChangeText={(t) => atualizar(`${tipo}-${campo.chave}`, t)}
+                placeholder={campo.dica}
+                placeholderTextColor={cores.cinza}
+                accessibilityLabel={campo.rotulo}
+                style={estilos.campo}
+              />
+            </View>
+          ),
+        )}
       </View>
 
       <BotaoAdesivo
         titulo="Publicar e avisar a região"
-        aoTocar={avisoVersaoTeste}
+        aoTocar={aoPublicar}
         inclinacao={-1}
         largo
       />

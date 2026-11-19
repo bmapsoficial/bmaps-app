@@ -3,7 +3,8 @@ import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Tela, TituloGrafite } from '../src/components/Rua';
+import { BotaoAdesivo, Tela, TituloGrafite } from '../src/components/Rua';
+import { sair } from '../src/auth/acoes';
 import {
   cores,
   coresAbasInicio,
@@ -107,6 +108,14 @@ export default function Configuracoes() {
         ))}
       </View>
 
+      {/* EXPERIMENTO (branch experimento/firebase-auth): acesso à sessão de teste e saída. */}
+      <BotaoAdesivo titulo="Sessão (teste)" aoTocar={() => router.push('/sessao-teste')} largo />
+      <BotaoAdesivo
+        titulo="Sair da conta"
+        variante="contorno"
+        aoTocar={() => sair().catch(() => {})}
+        largo
+      />
       {versao ? <Text style={estilos.versao}>B-Maps {versao} · versão de teste</Text> : null}
     </Tela>
   );

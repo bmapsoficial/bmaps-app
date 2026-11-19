@@ -14,6 +14,7 @@ import { PermanentMarker_400Regular } from '@expo-google-fonts/permanent-marker'
 import { SedgwickAveDisplay_400Regular } from '@expo-google-fonts/sedgwick-ave-display';
 
 import { cores } from '../src/theme';
+import { ProvedorSessao, useSessao } from '../src/auth/Sessao';
 
 export default function LayoutRaiz() {
   const [fontesProntas] = useFonts({
@@ -37,12 +38,45 @@ export default function LayoutRaiz() {
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: cores.fundo },
-        }}
-      />
+      <ProvedorSessao>
+        <Navegacao />
+      </ProvedorSessao>
     </SafeAreaProvider>
+  );
+}
+
+// EXPERIMENTO (branch experimento/firebase-auth): o app inteiro exige conta com e-mail
+// confirmado. Sem sessão, só as telas de acesso; com sessão sem e-mail confirmado, só a
+// tela de confirmação. O Stack.Protected do Expo Router redireciona sozinho.
+function Navegacao() {
+  const { carregando, usuario, emailConfirmado } = useSessao();
+
+  // Enquanto o Firebase lê a sessão guardada no Keychain, mostra só o fundo escuro.
+  if (carregando) {
+    return <View style={{ flex: 1, backgroundColor: cores.fundo }} />;
+  }
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: cores.fundo },
+      }}
+    >
+      <Stack.Protected guard={!usuario}>
+        <Stack.Screen name="entrar" />
+        <Stack.Screen name="cadastrar" />
+        <Stack.Screen name="recuperar-senha" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!usuario && !emailConfirmado}>
+        <Stack.Screen name="confirmar-email" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!usuario && emailConfirmado}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="configuracoes" />
+        <Stack.Screen name="notificacoes" />
+        <Stack.Screen name="sessao-teste" />
+      </Stack.Protected>
+    </Stack>
   );
 }

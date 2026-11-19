@@ -4,8 +4,15 @@
 import { useState } from 'react';
 import { Text } from 'react-native';
 
-import { BotaoAdesivo, CartaoPapel, Tela, TituloGrafite } from '../src/components/Rua';
-import { Aviso } from '../src/auth/Formulario';
+import { CartaoPapel } from '../src/components/Rua';
+import {
+  AcoesSecundarias,
+  Aviso,
+  BotaoPrincipal,
+  CabecalhoAcesso,
+  CartaoAcao,
+  TelaAcesso,
+} from '../src/auth/Formulario';
 import { atualizarConfirmacao, mensagemDeErro, reenviarConfirmacao, sair } from '../src/auth/acoes';
 import { useSessao } from '../src/auth/Sessao';
 import { cores, fontes } from '../src/theme';
@@ -31,10 +38,8 @@ export default function ConfirmarEmail() {
   }
 
   return (
-    <Tela>
-      <TituloGrafite tamanho={40} linhas={1} ajustar gotas={[0.05, 0.5, 0.95]}>
-        Confirme o e-mail
-      </TituloGrafite>
+    <TelaAcesso>
+      <CabecalhoAcesso titulo="Confirme o e-mail" />
       <CartaoPapel>
         <Text style={estilos.texto}>
           Enviamos um link para {usuario?.email}. Abra o e-mail, toque no link e depois volte para o
@@ -43,7 +48,7 @@ export default function ConfirmarEmail() {
       </CartaoPapel>
       <Aviso>{aviso}</Aviso>
       <Aviso tipo="erro">{erro}</Aviso>
-      <BotaoAdesivo
+      <BotaoPrincipal
         titulo="Já confirmei"
         aoTocar={() =>
           executar(atualizarConfirmacao, (ok) =>
@@ -51,25 +56,24 @@ export default function ConfirmarEmail() {
           )
         }
         desativado={ocupado}
-        largo
       />
-      <BotaoAdesivo
-        titulo="Reenviar e-mail"
-        variante="contorno"
-        aoTocar={() =>
-          executar(reenviarConfirmacao, () => 'E-mail reenviado. Confira também o spam.')
-        }
-        desativado={ocupado}
-        largo
-      />
-      <BotaoAdesivo
-        titulo="Sair"
-        variante="contorno"
-        aoTocar={() => executar(sair)}
-        desativado={ocupado}
-        largo
-      />
-    </Tela>
+      <AcoesSecundarias>
+        <CartaoAcao
+          titulo="Reenviar e-mail"
+          icone="mail-outline"
+          aoTocar={() =>
+            executar(reenviarConfirmacao, () => 'E-mail reenviado. Confira também o spam.')
+          }
+          desativado={ocupado}
+        />
+        <CartaoAcao
+          titulo="Sair"
+          icone="log-out-outline"
+          aoTocar={() => executar(sair)}
+          desativado={ocupado}
+        />
+      </AcoesSecundarias>
+    </TelaAcesso>
   );
 }
 

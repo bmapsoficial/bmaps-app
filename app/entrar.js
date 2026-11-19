@@ -1,13 +1,18 @@
 // EXPERIMENTO (branch experimento/firebase-auth). Tela de login.
 import { useState } from 'react';
-import { Pressable, Text } from 'react-native';
 import { router } from 'expo-router';
 
-import { BotaoAdesivo, Tela, TituloGrafite } from '../src/components/Rua';
-import { Aviso, Campo } from '../src/auth/Formulario';
+import {
+  AcoesSecundarias,
+  Aviso,
+  BotaoPrincipal,
+  CabecalhoAcesso,
+  Campo,
+  CartaoAcao,
+  TelaAcesso,
+} from '../src/auth/Formulario';
 import { entrar, mensagemDeErro } from '../src/auth/acoes';
 import { configuracaoAusente } from '../src/auth/firebase';
-import { cores, fontes } from '../src/theme';
 
 export default function Entrar() {
   const [email, setEmail] = useState('');
@@ -29,10 +34,8 @@ export default function Entrar() {
   }
 
   return (
-    <Tela>
-      <TituloGrafite tamanho={42} gotas={[0.06, 0.55, 0.94]}>
-        Entrar
-      </TituloGrafite>
+    <TelaAcesso compacta>
+      <CabecalhoAcesso titulo="Entrar" gotas={[0.06, 0.55, 0.94]} compacto />
       {configuracaoAusente.length > 0 ? (
         <Aviso tipo="erro">
           Firebase não configurado. Falta no .env: {configuracaoAusente.join(', ')}.
@@ -58,29 +61,19 @@ export default function Entrar() {
         placeholder="Sua senha"
       />
       <Aviso tipo="erro">{erro}</Aviso>
-      <BotaoAdesivo
+      <BotaoPrincipal
         titulo={enviando ? 'Entrando…' : 'Entrar'}
         aoTocar={aoEntrar}
         desativado={enviando || !email || !senha}
-        largo
       />
-      <Pressable onPress={() => router.push('/recuperar-senha')} accessibilityRole="link">
-        <Text style={estilos.link}>Esqueci minha senha</Text>
-      </Pressable>
-      <Pressable onPress={() => router.push('/cadastrar')} accessibilityRole="link">
-        <Text style={estilos.link}>Ainda não tenho conta — cadastrar</Text>
-      </Pressable>
-    </Tela>
+      <AcoesSecundarias>
+        <CartaoAcao
+          titulo="Esqueci minha senha"
+          aoTocar={() => router.push('/recuperar-senha')}
+          discreto
+        />
+        <CartaoAcao titulo="Criar uma conta" aoTocar={() => router.push('/cadastrar')} discreto />
+      </AcoesSecundarias>
+    </TelaAcesso>
   );
 }
-
-const estilos = {
-  link: {
-    fontFamily: fontes.bloco,
-    fontSize: 15,
-    letterSpacing: 1,
-    color: cores.laranja,
-    textTransform: 'uppercase',
-    paddingVertical: 10,
-  },
-};

@@ -57,10 +57,16 @@ const FUNDOS = [
   ],
 ];
 
-export function Tela({ children, rolagem = true, fundo = 0 }) {
+// `propsRolagem` (opcional) repassa propriedades extras à rolagem, por exemplo o ajuste
+// automático ao teclado nas telas de acesso. Sem ela, nada muda nas outras telas.
+export function Tela({ children, rolagem = true, fundo = 0, propsRolagem }) {
   const Conteudo = rolagem ? ScrollView : View;
   const propsConteudo = rolagem
-    ? { contentContainerStyle: estilos.conteudo, keyboardShouldPersistTaps: 'handled' }
+    ? {
+        contentContainerStyle: estilos.conteudo,
+        keyboardShouldPersistTaps: 'handled',
+        ...propsRolagem,
+      }
     : { style: [estilos.conteudo, { flex: 1 }] };
 
   return (

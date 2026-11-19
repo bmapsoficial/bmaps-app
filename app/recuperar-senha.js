@@ -1,11 +1,18 @@
 // EXPERIMENTO (branch experimento/firebase-auth). Recuperação de senha por e-mail.
 // A mensagem é a mesma exista ou não conta com o e-mail (não revela quem é usuário).
 import { useState } from 'react';
-import { Pressable, Text } from 'react-native';
-import { router } from 'expo-router';
+import { Text } from 'react-native';
 
-import { BotaoAdesivo, Tela, TituloGrafite } from '../src/components/Rua';
-import { Aviso, Campo } from '../src/auth/Formulario';
+import {
+  AcoesSecundarias,
+  Aviso,
+  BotaoPrincipal,
+  CabecalhoAcesso,
+  Campo,
+  CartaoAcao,
+  TelaAcesso,
+  voltarOu,
+} from '../src/auth/Formulario';
 import { mensagemDeErro, recuperarSenha } from '../src/auth/acoes';
 import { cores, fontes } from '../src/theme';
 
@@ -32,12 +39,14 @@ export default function RecuperarSenha() {
   }
 
   return (
-    <Tela>
-      <TituloGrafite tamanho={40} linhas={1} ajustar gotas={[0.05, 0.5, 0.95]}>
-        Nova senha
-      </TituloGrafite>
+    <TelaAcesso compacta>
+      <CabecalhoAcesso titulo="Recuperar senha" compacto />
+      <Text style={estilos.explicacao}>
+        Informe o e-mail que você usou no cadastro. Vamos enviar um link para você criar uma nova
+        senha.
+      </Text>
       <Campo
-        rotulo="E-mail da conta"
+        rotulo="E-mail"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -47,26 +56,31 @@ export default function RecuperarSenha() {
       />
       <Aviso>{aviso}</Aviso>
       <Aviso tipo="erro">{erro}</Aviso>
-      <BotaoAdesivo
+      <BotaoPrincipal
         titulo={enviando ? 'Enviando…' : 'Enviar link'}
         aoTocar={aoEnviar}
         desativado={enviando || !email}
-        largo
       />
-      <Pressable onPress={() => router.back()} accessibilityRole="link">
-        <Text style={estilos.link}>Voltar</Text>
-      </Pressable>
-    </Tela>
+      <AcoesSecundarias>
+        <CartaoAcao
+          titulo="Voltar"
+          icone="arrow-back"
+          aoTocar={() => voltarOu('/entrar')}
+          discreto
+        />
+      </AcoesSecundarias>
+    </TelaAcesso>
   );
 }
 
 const estilos = {
-  link: {
-    fontFamily: fontes.bloco,
+  explicacao: {
+    fontFamily: fontes.texto,
     fontSize: 15,
-    letterSpacing: 1,
-    color: cores.laranja,
-    textTransform: 'uppercase',
-    paddingVertical: 10,
+    lineHeight: 22,
+    color: cores.textoSuave,
+    textAlign: 'center',
+    // Aproxima o texto do título; o espaço até o campo segue o padrão da tela.
+    marginTop: -6,
   },
 };

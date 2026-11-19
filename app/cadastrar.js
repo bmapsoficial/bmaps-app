@@ -2,13 +2,17 @@
 // A política de senha vale de verdade no Firebase (configurada no console); aqui só
 // evitamos enviar o formulário obviamente incompleto.
 import { useState } from 'react';
-import { Pressable, Text } from 'react-native';
-import { router } from 'expo-router';
-
-import { BotaoAdesivo, Tela, TituloGrafite } from '../src/components/Rua';
-import { Aviso, Campo } from '../src/auth/Formulario';
+import {
+  AcoesSecundarias,
+  Aviso,
+  BotaoPrincipal,
+  CabecalhoAcesso,
+  Campo,
+  CartaoAcao,
+  TelaAcesso,
+  voltarOu,
+} from '../src/auth/Formulario';
 import { cadastrar, mensagemDeErro } from '../src/auth/acoes';
-import { cores, fontes } from '../src/theme';
 
 export default function Cadastrar() {
   const [nome, setNome] = useState('');
@@ -36,10 +40,8 @@ export default function Cadastrar() {
   }
 
   return (
-    <Tela>
-      <TituloGrafite tamanho={42} gotas={[0.05, 0.5, 0.95]}>
-        Cadastrar
-      </TituloGrafite>
+    <TelaAcesso compacta>
+      <CabecalhoAcesso titulo="Criar uma conta" compacto />
       <Campo
         rotulo="Nome"
         value={nome}
@@ -67,7 +69,7 @@ export default function Cadastrar() {
         placeholder="Crie uma senha"
       />
       <Campo
-        rotulo="Repita a senha"
+        rotulo="Repetir senha"
         value={confirmacao}
         onChangeText={setConfirmacao}
         secureTextEntry
@@ -76,26 +78,19 @@ export default function Cadastrar() {
         placeholder="Repita a senha"
       />
       <Aviso tipo="erro">{erro}</Aviso>
-      <BotaoAdesivo
+      <BotaoPrincipal
         titulo={enviando ? 'Criando…' : 'Criar conta'}
         aoTocar={aoCadastrar}
         desativado={enviando || !nome.trim() || !email || !senha || !confirmacao}
-        largo
       />
-      <Pressable onPress={() => router.back()} accessibilityRole="link">
-        <Text style={estilos.link}>Já tenho conta — entrar</Text>
-      </Pressable>
-    </Tela>
+      <AcoesSecundarias>
+        <CartaoAcao
+          titulo="Voltar"
+          icone="arrow-back"
+          aoTocar={() => voltarOu('/entrar')}
+          discreto
+        />
+      </AcoesSecundarias>
+    </TelaAcesso>
   );
 }
-
-const estilos = {
-  link: {
-    fontFamily: fontes.bloco,
-    fontSize: 15,
-    letterSpacing: 1,
-    color: cores.laranja,
-    textTransform: 'uppercase',
-    paddingVertical: 10,
-  },
-};

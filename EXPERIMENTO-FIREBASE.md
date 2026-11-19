@@ -13,7 +13,15 @@ Protótipo isolado. Não juntar com `etapa1/configuracoes` nem com `main` sem ap
 - Ao voltar para o app depois de confirmar o e-mail no navegador, o app recarrega o
   usuário e força um token novo (`src/auth/Sessao.js`).
 
-## Antes de testar (precisa de autorização)
+## Projeto Firebase criado
+
+- Nome: **B-MAPS Brasil** · ID: `b-maps-brasil` · conta Google: bmapsbrasil@gmail.com
+- Plano **Spark** (sem cartão), sem Google Analytics e sem Gemini.
+- Authentication: só **E-mail/senha** ativo; proteção contra enumeração de e-mails ativa;
+  política de senha **exigida**: mínimo 10 caracteres, com letra minúscula e número.
+- App Web registrado (sem Hosting). E-mails e página de ações em pt-BR (`languageCode`).
+
+## Antes de testar (precisa de autorização) — já feito, mantido como referência
 
 1. Criar o projeto no Firebase, no plano **Spark** (sem cartão).
 2. Em Authentication: ativar **E-mail/senha**, a **proteção contra enumeração de e-mails**

@@ -34,3 +34,6 @@ function criarAuth() {
 }
 
 export const auth = criarAuth();
+
+// E-mails de confirmação/recuperação e a página de ações do Firebase em português.
+if (auth) auth.languageCode = 'pt-BR';
